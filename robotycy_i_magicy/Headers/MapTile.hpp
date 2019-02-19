@@ -8,7 +8,7 @@
 class MapTile : public sf::RectangleShape
 {
 public:
-    enum Type {Grass1, Grass2, Path, Metal1, Metal2, Black};
+    enum class Type {Grass1, Grass2, Path, Metal1, Metal2, Black};
 private:
     
     constexpr static int Size = 32;
@@ -25,6 +25,7 @@ public:
         : type(_type), position(_position), walkable(_walkable)
     {
         setSize({Size, Size});
+        setPosition(position * Size);
         setTexture(&textureManager.get("assets/textures.png"));
         setTextureRect(typeToTextureRect.at(type));
     }

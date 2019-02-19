@@ -318,6 +318,15 @@ struct Transform
         : position(position_), rotation(rotation_), scale(scale_)
 	{
 	}
+	
+	operator sf::Transform()
+	{
+	    sf::Transform t;
+	    t.rotate(rotation);
+	    t.scale(scale);
+	    t.translate(position);
+	    return t;
+	}
 };
 
 class Transformable
@@ -407,6 +416,11 @@ public:
 	virtual double	 getRotation()	const
 	{
 		return transform.rotation;
+	}
+	
+	Transform getTransform() const
+	{
+	    return transform;
 	}
 	
 	virtual ~SimpleTransformable(){};

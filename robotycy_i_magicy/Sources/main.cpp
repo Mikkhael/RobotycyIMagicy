@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "../Headers/Input.hpp"
-#include "../Headers/MapTile.hpp"
+#include "../Headers/Map.hpp"
 
 int main()
 {
@@ -21,6 +21,10 @@ int main()
     Input::addKeyMapping(Action::use,   sf::Keyboard::Space);
     Input::addKeyMapping(Action::use,   sf::Keyboard::E);
     Input::addKeyMapping(Action::use,   sf::Mouse::Right);
+    
+    Map map;
+    map.addNewMapTile(new MapTile(MapTile::Type::Metal2, {1, 12}));
+    map.addNewMapTile(new MapTile(MapTile::Type::Grass2, {1, 13}));
     
     sf::Event event;
     while(window.isOpen())
@@ -47,6 +51,8 @@ int main()
         {
             window.clear(sf::Color::Blue);
         }
+        
+        window.draw(map);
         
         window.display();
     }
