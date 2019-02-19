@@ -1,6 +1,7 @@
 #include <iostream>
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 #include "../Headers/Input.hpp"
+#include "../Headers/MapTile.hpp"
 
 int main()
 {
@@ -18,8 +19,8 @@ int main()
     Input::addKeyMapping(Action::down,  sf::Keyboard::Down);
     Input::addKeyMapping(Action::shoot, sf::Mouse::Left);
     Input::addKeyMapping(Action::use,   sf::Keyboard::Space);
-    
-    std::cout << "Tak" << std::endl;
+    Input::addKeyMapping(Action::use,   sf::Keyboard::E);
+    Input::addKeyMapping(Action::use,   sf::Mouse::Right);
     
     sf::Event event;
     while(window.isOpen())

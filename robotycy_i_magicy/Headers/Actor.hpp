@@ -1,0 +1,6 @@
+#ifndef ACTOR_HPP_INCLUDED
+#define ACTOR_HPP_INCLUDED
+
+
+
+#endif // ACTOR_HPP_INCLUDED
