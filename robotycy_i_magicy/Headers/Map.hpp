@@ -6,29 +6,47 @@
 
 class Map : public sf::Drawable, public SimpleTransformable
 {
-    std::vector<MapTile*> mapTiles;
+    
+    Vector2u size;
+    std::vector<std::vector< MapTile > > grid;
     
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         states.transform = states.transform.combine(getTransform());
-        for(auto& mapTile : mapTiles)
+        for(auto i = 0u; i<grid.size(); i++)
         {
-            target.draw(*mapTile, states);
+            for(auto j = 0u; j<grid[0].size(); j++)
+            {
+                target.draw(grid[i][j], states);
+            }
         }
     }
     
 public:
     
-    void addNewMapTile(MapTile* mapTile)
+    MapTile& getTile(unsigned int x, unsigned int y)
     {
-        mapTiles.push_back(mapTile);
+        return grid[y][x];
+    }
+    MapTile& getTile(const Vector2u& pos)
+    {
+        return grid[pos.y][pos.x];
     }
     
-    ~Map()
+    Vector2u getSize()
     {
-        for(auto i = mapTiles.begin(); i<mapTiles.end(); i++)
+        return size;
+    }
+    
+    Map(const Vector2u& _size)
+        : size(_size), grid(size.y, std::vector<MapTile>(size.x))
+    {
+        for(unsigned int i=0u; i<size.y; i++)
         {
-            delete *i;
+            for(unsigned int j=0u; j<size.x; j++)
+            {
+                grid[i][j] = MapTile({j, i});
+            }
         }
     }
     

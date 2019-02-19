@@ -21,13 +21,34 @@ private:
     
 public:
     
-    MapTile(Type _type, const Vector2i& _position, bool _walkable = false)
-        : type(_type), position(_position), walkable(_walkable)
+    void setType(Type _type)
+    {
+        type = _type;
+        setTextureRect(typeToTextureRect.at(type));
+    }
+    void setWalkable(bool _walkable)
+    {
+        walkable = _walkable;
+    }
+    
+    void set(Type _type, bool _walkable = true)
+    {
+        setType(_type);
+        setWalkable(_walkable);
+    }
+    
+    bool isWalkable()
+    {
+        return walkable;
+    }
+    
+    MapTile(const Vector2i& _position = {0,0}, Type _type = Type::Black, bool _walkable = false)
+        : position(_position), walkable(_walkable)
     {
         setSize({Size, Size});
         setPosition(position * Size);
         setTexture(&textureManager.get("assets/textures.png"));
-        setTextureRect(typeToTextureRect.at(type));
+        setType(_type);
     }
     
 };

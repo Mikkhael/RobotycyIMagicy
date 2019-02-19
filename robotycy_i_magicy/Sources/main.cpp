@@ -22,9 +22,10 @@ int main()
     Input::addKeyMapping(Action::use,   sf::Keyboard::E);
     Input::addKeyMapping(Action::use,   sf::Mouse::Right);
     
-    Map map;
-    map.addNewMapTile(new MapTile(MapTile::Type::Metal2, {1, 12}));
-    map.addNewMapTile(new MapTile(MapTile::Type::Grass2, {1, 13}));
+    Map map({30, 30});
+    map.getTile(2, 4).set(MapTile::Type::Grass1);
+    map.getTile(2, 5).set(MapTile::Type::Metal1);
+    map.getTile(3, 4).set(MapTile::Type::Grass2);
     
     sf::Event event;
     while(window.isOpen())
