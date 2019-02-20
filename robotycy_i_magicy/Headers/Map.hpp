@@ -24,6 +24,21 @@ class Map : public sf::Drawable, public SimpleTransformable
     
 public:
     
+    void setTile(unsigned int x, unsigned int y, MapTile::Type mapTile)
+    {
+        if(x < size.x && y < size.y)
+        {
+            grid[y][x].setType(mapTile);
+        }
+    }
+    void setTile(const Vector2u& pos, MapTile::Type mapTile)
+    {
+        if(pos.x < size.x && pos.y < size.y)
+        {
+            grid[pos.y][pos.x].setType(mapTile);
+        }
+    }
+    
     MapTile& getTile(unsigned int x, unsigned int y)
     {
         return grid[y][x];
@@ -31,6 +46,39 @@ public:
     MapTile& getTile(const Vector2u& pos)
     {
         return grid[pos.y][pos.x];
+    }
+    
+    void setTileRect(MapTile::Type mapTile, const sf::IntRect& rect)
+    {
+        for(int i=0; i<rect.height; i++)
+        {
+            for(int j=0; j<rect.width; j++)
+            {
+                setTile(j+rect.left, i+rect.top, mapTile);
+            }
+        }
+    }
+    
+    void setTileRectsWithBorder(MapTile::Type mapTileFill, MapTile::Type border, const std::vector< sf::IntRect >& rects)
+    {
+        for(auto& rect : rects)
+        {
+            for(int i = -1; i <= rect.width ; i++)
+            {
+                setTile(rect.left + i, rect.top - 1, border);
+                setTile(rect.left + i, rect.top + rect.height, border);
+            }
+            for(int i = 0; i <= rect.height; i++)
+            {
+                setTile(rect.left - 1, rect.top + i, border);
+                setTile(rect.left + rect.width, rect.top + i, border);
+            }
+        }
+        
+        for(auto& rect : rects)
+        {
+            setTileRect(mapTileFill, rect);
+        }
     }
     
     Vector2u getSize()

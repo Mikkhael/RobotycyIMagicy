@@ -55,7 +55,13 @@
 		<Linker>
 			<Add directory="%SFMLDIRECTORY%/lib" />
 		</Linker>
-		<Unit filename="main.cpp" />
+		<Unit filename="Headers/Actor.hpp" />
+		<Unit filename="Headers/Input.hpp" />
+		<Unit filename="Headers/Map.hpp" />
+		<Unit filename="Headers/MapTile.hpp" />
+		<Unit filename="Headers/TextureManager.hpp" />
+		<Unit filename="Headers/Vectors.hpp" />
+		<Unit filename="Sources/main.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

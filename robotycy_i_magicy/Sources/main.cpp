@@ -23,11 +23,17 @@ int main()
     Input::addKeyMapping(Action::use,   sf::Mouse::Right);
     
     Map map({30, 30});
-    map.getTile(2, 4).set(MapTile::Type::Grass1);
-    map.getTile(2, 5).set(MapTile::Type::Metal1);
-    map.getTile(3, 4).set(MapTile::Type::Grass2);
+    map.setTileRectsWithBorder(MapTile::Type::Grass1, MapTile::Type::Metal1, {{3, 3, 5, 20}, {8, 17, 10, 3}});
+    map.setTileRectsWithBorder(MapTile::Type::Path, MapTile::Type::Grass2, {{5, 2, 2, 30}});
+    
+    map.setTileRect(MapTile::Type::Metal1, {10, 10, 4, 4});
+    map.setTile(12, 12, MapTile::Type::Metal2);
     
     sf::Event event;
+    sf::Clock clock;
+    sf::Time elapsedTime, lastTime;
+    float deltaTime = 0;
+    
     while(window.isOpen())
     {
         while(window.pollEvent(event))
@@ -38,6 +44,10 @@ int main()
                 window.close();
             }
         }
+        
+        elapsedTime = clock.getElapsedTime();
+        deltaTime = (elapsedTime - lastTime).asSeconds();
+        lastTime = elapsedTime;
         
         Input::updateKeyStates();
         
@@ -52,6 +62,26 @@ int main()
         {
             window.clear(sf::Color::Blue);
         }
+        
+        constexpr float speed = 3000;
+        if(Input::isPressed(Action::down))
+        {
+            map.move({0, -speed * deltaTime});
+        }
+        if(Input::isPressed(Action::up))
+        {
+            map.move({0, speed * deltaTime});
+        }
+        if(Input::isPressed(Action::left))
+        {
+            map.move({speed * deltaTime, 0});
+        }
+        if(Input::isPressed(Action::right))
+        {
+            map.move({-speed * deltaTime, 0});
+        }
+        
+        
         
         window.draw(map);
         
