@@ -10,16 +10,16 @@ class Actor : public sf::Drawable, public SimpleTransformable
 protected:
     Vector2d size;
     
-    Vector2d positionToCoords()
+    Vector2d positionToCoords() const
     {
         return (getPosition() - map->getPosition()) / 32;
     }
-    Vector2d coordsToPosition(const Vector2d& coords)
+    Vector2d coordsToPosition(const Vector2d& coords) const
     {
         return coords * 32 + map->getPosition();
     }
     
-   void setValidScaleAndOrigin(sf::Transformable& target, const Vector2d& targetSize)
+   void setValidScaleAndOrigin(sf::Transformable& target, const Vector2d& targetSize) const
     {
         target.setOrigin(targetSize / 2);
         target.setScale(size.x / targetSize.x, size.y / targetSize.y);
@@ -33,7 +33,7 @@ protected:
         if(isWalking)
         {
             Vector2d path = destination - getPosition();
-            if(path.magnatudeSquared() <= walkSpeed * deltaTime)
+            if(path.magnatudeSquared() <= walkSpeed*walkSpeed * deltaTime*deltaTime)
             {
                 setPosition(destination);
                 isWalking = false;
@@ -68,12 +68,15 @@ public:
         isWalking = false;
     }
     
-    bool isActorWalking()
+    bool isActorWalking() const
     {
         return isWalking;
     }
     
-    virtual void update(double deltaTime){};
+    virtual void update(double deltaTime)
+    {
+        walk(deltaTime);
+    }
     
     virtual ~Actor(){}
 };

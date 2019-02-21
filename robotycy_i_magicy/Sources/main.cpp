@@ -31,7 +31,7 @@ int main()
     map.setTile(12, 12, MapTile::Type::Metal2);
     
     
-    PlayerMageActor player(map, {0, 0}, {28, 28});
+    PlayerMageActor player(map, {60, 60}, {28, 28});
     
     sf::Event event;
     sf::Clock clock;

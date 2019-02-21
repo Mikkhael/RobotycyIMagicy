@@ -36,7 +36,7 @@ const Vector2i playerSpriteDimensions(16, 16);
 
 namespace AnimatedSpritePresets
 {
-	const AnimatedSpritePreset	MageWalk		= AnimatedSpritePreset("assets/textures.png", sf::IntRect(16, 47, 7, 17), 	1, 		4);
+	const AnimatedSpritePreset	MageWalk		= AnimatedSpritePreset("assets/textures.png", sf::IntRect(16, 45, 7, 21), 	0.5, 		4);
 }
 
 class AnimatedSprite : public sf::Sprite
