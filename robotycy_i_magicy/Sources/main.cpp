@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "../Headers/Input.hpp"
 #include "../Headers/Map.hpp"
+#include "../Headers/MageActor.hpp"
 
 int main()
 {
@@ -28,6 +29,9 @@ int main()
     
     map.setTileRect(MapTile::Type::Metal1, {10, 10, 4, 4});
     map.setTile(12, 12, MapTile::Type::Metal2);
+    
+    
+    PlayerMageActor player(map, {0, 0}, {28, 28});
     
     sf::Event event;
     sf::Clock clock;
@@ -64,26 +68,32 @@ int main()
         }
         
         constexpr float speed = 3000;
-        if(Input::isPressed(Action::down))
+        if(Input::isPressed(Action::use))
         {
-            map.move({0, -speed * deltaTime});
+            if(Input::isPressed(Action::down))
+            {
+                map.move({0, -speed * deltaTime});
+            }
+            if(Input::isPressed(Action::up))
+            {
+                map.move({0, speed * deltaTime});
+            }
+            if(Input::isPressed(Action::left))
+            {
+                map.move({speed * deltaTime, 0});
+            }
+            if(Input::isPressed(Action::right))
+            {
+                map.move({-speed * deltaTime, 0});
+            }
         }
-        if(Input::isPressed(Action::up))
-        {
-            map.move({0, speed * deltaTime});
-        }
-        if(Input::isPressed(Action::left))
-        {
-            map.move({speed * deltaTime, 0});
-        }
-        if(Input::isPressed(Action::right))
-        {
-            map.move({-speed * deltaTime, 0});
-        }
+        
+        player.update(deltaTime);
         
         
         
         window.draw(map);
+        window.draw(player);
         
         window.display();
     }

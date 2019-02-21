@@ -179,7 +179,10 @@ public:
 			return Vector2f(0,0);
 		return bindedWindow->mapPixelToCoords(sf::Mouse::getPosition(*bindedWindow));
 	}
-	
+	static Vector2f getDirectionAxis()
+	{
+	    return Vector2f ( (isPressed(Action::right) ? 1 : 0) + (isPressed(Action::left) ? -1 : 0), (isPressed(Action::down) ? 1 : 0) + (isPressed(Action::up) ? -1 : 0) );
+	}
 	
 };
 
