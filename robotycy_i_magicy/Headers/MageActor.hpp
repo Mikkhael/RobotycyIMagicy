@@ -48,6 +48,7 @@ public:
         goToDestination(getPosition() + destination);
         
         walk(deltaTime);
+        hatSprite.setRotation(toDegrees((Input::getMouseView() - getPosition()).getRotationAngle()) - 90);
         
     }
     

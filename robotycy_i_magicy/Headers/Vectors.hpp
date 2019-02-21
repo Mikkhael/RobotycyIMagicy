@@ -12,6 +12,10 @@ inline double toRadians(double degrees)
 {
 	return degrees*M_PI_180;
 }
+inline double toDegrees(double radians)
+{
+    return radians/M_PI_180;
+}
 
 template<typename T>
 class Vector2
@@ -190,7 +194,12 @@ public:
     Vector2<T> rotate(double angle) const;
     Vector2<T>& rotateSelf(double angle);
     
-    
+    double getRotationAngle() const
+    {
+	    Vector2<T> unit(1, 0);
+	    Vector2<T> targetRotationVector = normalize();
+	    return std::acos(unit.dot(targetRotationVector)) * (targetRotationVector.y < 0 ? -1 : 1);
+    }
     
     Vector2(){}
     Vector2(T _x, T _y)
@@ -351,6 +360,11 @@ public:
 	void rotate(double rotation)
 	{
 		setRotation(getRotation() + rotation);
+	}
+	
+	void rotateTo(const Vector2d& target)
+	{
+	    setRotation((target - getPosition()).getRotationAngle());
 	}
 	
 	void setTransform(const Transformable& t)
