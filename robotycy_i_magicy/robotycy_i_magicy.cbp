@@ -56,7 +56,10 @@
 			<Add directory="%SFMLDIRECTORY%/lib" />
 		</Linker>
 		<Unit filename="Headers/Actor.hpp" />
+		<Unit filename="Headers/Animations.hpp" />
+		<Unit filename="Headers/Collisions.hpp" />
 		<Unit filename="Headers/Input.hpp" />
+		<Unit filename="Headers/MageActor.hpp" />
 		<Unit filename="Headers/Map.hpp" />
 		<Unit filename="Headers/MapTile.hpp" />
 		<Unit filename="Headers/TextureManager.hpp" />

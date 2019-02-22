@@ -31,7 +31,9 @@ int main()
     map.setTile(12, 12, MapTile::Type::Metal2);
     
     
-    PlayerMageActor player(map, {60, 60}, {28, 28});
+    PlayerMageActor player(map, {100, 100}, {28, 28});
+    MageActor x(map, {100, 150}, {40, 40});
+    x.goToDestination({300, 300});
     
     sf::Event event;
     sf::Clock clock;
@@ -89,11 +91,14 @@ int main()
         }
         
         player.update(deltaTime);
-        
+        x.update(deltaTime);
         
         
         window.draw(map);
+        window.draw(x);
         window.draw(player);
+        
+        window.draw(tempActor);
         
         window.display();
     }

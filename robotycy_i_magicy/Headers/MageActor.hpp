@@ -71,7 +71,7 @@ public:
         hatSprite.setRotation(newRotation);
         bodySprite.setRotation(newRotation);
         
-        std::cout << Vector2i(positionToCoords()) << std::endl;
+        moveOutOfWalls();
     }
     
     virtual ~PlayerMageActor(){};

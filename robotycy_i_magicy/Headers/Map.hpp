@@ -24,6 +24,17 @@ class Map : public sf::Drawable, public SimpleTransformable
     
 public:
     
+    
+    Vector2d positionToCoords(const Vector2d& position) const
+    {
+        return (position - getPosition()) / 32;
+    }
+    Vector2d coordsToPosition(const Vector2d& coords) const
+    {
+        return coords * 32 + getPosition();
+    }
+    
+    
     void setTile(unsigned int x, unsigned int y, MapTile::Type mapTile)
     {
         if(x < size.x && y < size.y)
@@ -39,6 +50,16 @@ public:
         }
     }
     
+    bool areCoordsGood(const Vector2u& coords)
+    {
+        return coords.x < size.x && coords.y < size.y;
+    }
+    
+    bool isTileWalkable(const Vector2u& coords)
+    {
+        return areCoordsGood(coords) ? getTile(coords).isWalkable() : false;
+    }
+    
     MapTile& getTile(unsigned int x, unsigned int y)
     {
         return grid[y][x];
@@ -46,6 +67,11 @@ public:
     MapTile& getTile(const Vector2u& pos)
     {
         return grid[pos.y][pos.x];
+    }
+    
+    sf::FloatRect getTileRect(const Vector2u& coords)
+    {
+        return sf::FloatRect( getPosition().x + coords.x * 32, getPosition().y + coords.y * 32, 32 * getScale().x, 32 * getScale().y);
     }
     
     void setTileRect(MapTile::Type mapTile, const sf::IntRect& rect)
