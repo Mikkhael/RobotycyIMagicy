@@ -23,7 +23,7 @@ int main()
     Input::addKeyMapping(Action::use,   sf::Keyboard::E);
     Input::addKeyMapping(Action::use,   sf::Mouse::Right);
     
-    Map map({30, 30});
+    Map map({30, 30}, 32);
     map.setTileRectsWithBorder(MapTile::Type::Grass1, MapTile::Type::Metal1, {{3, 3, 5, 20}, {8, 17, 10, 3}});
     map.setTileRectsWithBorder(MapTile::Type::Path, MapTile::Type::Grass2, {{5, 2, 2, 30}});
     
@@ -32,7 +32,7 @@ int main()
     
     
     PlayerMageActor player(map, {100, 100}, {28, 28});
-    MageActor x(map, {100, 150}, {40, 40});
+    MageActor x(map, {100, 150});
     x.goToDestination({300, 300});
     
     sf::Event event;

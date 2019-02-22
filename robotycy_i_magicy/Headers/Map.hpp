@@ -24,14 +24,15 @@ class Map : public sf::Drawable, public SimpleTransformable
     
 public:
     
+    const float tileSize;
     
     Vector2d positionToCoords(const Vector2d& position) const
     {
-        return (position - getPosition()) / 32;
+        return (position - getPosition()) / tileSize;
     }
     Vector2d coordsToPosition(const Vector2d& coords) const
     {
-        return coords * 32 + getPosition();
+        return coords * tileSize + getPosition();
     }
     
     
@@ -71,7 +72,7 @@ public:
     
     sf::FloatRect getTileRect(const Vector2u& coords)
     {
-        return sf::FloatRect( getPosition().x + coords.x * 32, getPosition().y + coords.y * 32, 32 * getScale().x, 32 * getScale().y);
+        return sf::FloatRect( getPosition().x + coords.x * tileSize, getPosition().y + coords.y * tileSize, tileSize * getScale().x, tileSize * getScale().y);
     }
     
     void setTileRect(MapTile::Type mapTile, const sf::IntRect& rect)
@@ -112,14 +113,17 @@ public:
         return size;
     }
     
-    Map(const Vector2u& _size)
-        : size(_size), grid(size.y, std::vector<MapTile>(size.x))
+    Map(const Vector2u& _size, int _tileSize = 32)
+        : size(_size), tileSize(_tileSize)
     {
+        grid.reserve(size.y);
         for(unsigned int i=0u; i<size.y; i++)
         {
+            grid.push_back({});
+            grid[i].reserve(size.x);
             for(unsigned int j=0u; j<size.x; j++)
             {
-                grid[i][j] = MapTile({j, i});
+                grid[i].emplace_back(tileSize, Vector2d(j, i));
             }
         }
     }

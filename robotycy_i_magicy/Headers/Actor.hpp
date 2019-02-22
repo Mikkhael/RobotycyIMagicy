@@ -95,10 +95,14 @@ protected:
     }
     
 public:
-    Actor(Map& _map, const Vector2d& _pos = {0,0}, const Vector2d& _size = {32, 32})
+    Actor(Map& _map, const Vector2d& _pos = {0,0}, const Vector2d& _size = {0, 0})
         : map(&_map), size(_size)
     {
         setPosition(_pos);
+        if(size.magnatude() == 0)
+        {
+            size = {map->tileSize, map->tileSize};
+        }
     }
     
     double walkSpeed = 200;

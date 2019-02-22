@@ -12,7 +12,7 @@ public:
     enum class Type {Grass1, Grass2, Path, Metal1, Metal2, Black};
 private:
     
-    constexpr static int Size = 32;
+    const float size = 32;
     
     const static std::map<Type, sf::IntRect> typeToTextureRect;
     const static std::unordered_set<int>    nonWalkableTypes;
@@ -33,11 +33,11 @@ public:
         return nonWalkableTypes.count(int(type)) <= 0;
     }
     
-    MapTile(const Vector2u& _position = {0,0}, Type _type = Type::Black)
-        : position(_position)
+    MapTile(int _size = 32, const Vector2u& _position = {0,0}, Type _type = Type::Black)
+        : size(_size), position(_position)
     {
-        setSize({Size, Size});
-        setPosition(position * Size);
+        setSize({size, size});
+        setPosition(position * size);
         setTexture(&textureManager.get("assets/textures.png"));
         setType(_type);
     }
