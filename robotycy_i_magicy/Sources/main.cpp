@@ -3,6 +3,7 @@
 #include "../Headers/Input.hpp"
 #include "../Headers/Map.hpp"
 #include "../Headers/MageActor.hpp"
+#include "../Headers/RobotActor.hpp"
 
 int main()
 {
@@ -34,6 +35,10 @@ int main()
     PlayerMageActor player(map, {100, 100}, {28, 28});
     MageActor x(map, {100, 150});
     x.goToDestination({300, 300});
+    
+    RobotActor r1(map, {200, 200}, {32, 32});
+    r1.goToDestination({250, 550});
+    
     
     sf::Event event;
     sf::Clock clock;
@@ -90,11 +95,15 @@ int main()
             }
         }
         
+        r1.update(deltaTime);
         player.update(deltaTime);
         x.update(deltaTime);
         
         
         window.draw(map);
+        
+        window.draw(r1);
+        
         window.draw(x);
         window.draw(player);
         

@@ -93,6 +93,11 @@ protected:
         
         return false;
     }
+    bool rotateToDestinationWhenWalking = true;
+    
+    virtual void rotateActorTo(const Vector2d& target)
+    {
+    }
     
 public:
     Actor(Map& _map, const Vector2d& _pos = {0,0}, const Vector2d& _size = {0, 0})
@@ -107,13 +112,20 @@ public:
     
     double walkSpeed = 200;
     
+    
     void goToDestination(const Vector2d& dest, double ws = 0)
     {
         destination = dest;
         if(ws != 0)
             walkSpeed = ws;
         isWalking = true;
+        if(rotateToDestinationWhenWalking)
+        {
+            rotateActorTo(destination);
+        }
     }
+    
+    
     
     void stopWalking()
     {

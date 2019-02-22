@@ -21,6 +21,12 @@ protected:
         target.draw(hatSprite, states);
     }
     
+    virtual void rotateActorTo(const Vector2d& target)
+    {
+        double newRotation = toDegrees((target - getPosition()).getRotationAngle()) - 90;
+        hatSprite.setRotation(newRotation);
+        bodySprite.setRotation(newRotation);
+    }
 public:
     
     MageActor(Map& _map, const Vector2d& _pos = {0,0}, const Vector2d& _size = {32, 32})
@@ -60,6 +66,7 @@ public:
         : MageActor(_map, _pos, _size)
     {        
         walkSpeed = 200;
+        rotateToDestinationWhenWalking = false;
     }
     
     void update(double deltaTime)
@@ -67,9 +74,7 @@ public:
         MageActor::update(deltaTime);
         Vector2d destination = Input::getDirectionAxis() * 100000;
         goToDestination(getPosition() + destination);
-        double newRotation = toDegrees((Input::getMouseView() - getPosition()).getRotationAngle()) - 90;
-        hatSprite.setRotation(newRotation);
-        bodySprite.setRotation(newRotation);
+        rotateActorTo(Input::getMouseView());
         
         moveOutOfWalls();
     }
