@@ -39,6 +39,8 @@ int main()
     RobotActor r1(map, {200, 200}, {32, 32});
     r1.goToDestination({250, 550});
     
+    RobotCircleActor r2(map, {200, 400});
+    
     
     sf::Event event;
     sf::Clock clock;
@@ -96,6 +98,7 @@ int main()
         }
         
         r1.update(deltaTime);
+        r2.update(deltaTime);
         player.update(deltaTime);
         x.update(deltaTime);
         
@@ -103,6 +106,7 @@ int main()
         window.draw(map);
         
         window.draw(r1);
+        window.draw(r2);
         
         window.draw(x);
         window.draw(player);

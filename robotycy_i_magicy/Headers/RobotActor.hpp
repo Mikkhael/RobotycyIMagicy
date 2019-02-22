@@ -58,4 +58,42 @@ public:
     virtual ~RobotActor(){};
 };
 
+class RobotCircleActor : public Actor
+{
+    
+protected:
+    sf::Sprite headSprite;
+    sf::Sprite bodySprite;
+    
+    double rotationSpeed = 20;
+    
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
+    {
+        states.transform = states.transform.combine(getTransform());
+        target.draw(bodySprite, states);
+        target.draw(headSprite, states);
+    }
+    
+public:
+    
+    RobotCircleActor(Map& _map, const Vector2d& _pos = {0,0}, const Vector2d& _size = {64, 64})
+        : Actor(_map, _pos, _size)
+    {
+        bodySprite.setTexture(textureManager.get("assets/textures.png"));
+        bodySprite.setTextureRect({0, 96, 30, 30});
+        headSprite.setTexture(textureManager.get("assets/textures.png"));
+        headSprite.setTextureRect({0, 128, 26, 26});
+        setValidScaleAndOrigin(bodySprite, {30, 30});
+        setValidScaleAndOrigin(headSprite, {26, 26});
+    }
+    
+    virtual void update(double deltaTime)
+    {
+        Actor::update(deltaTime);
+        headSprite.rotate(rotationSpeed * deltaTime);
+    }
+    
+    virtual ~RobotCircleActor  (){};
+};
+
 #endif // ROBOTACTOR_HPP_INCLUDED

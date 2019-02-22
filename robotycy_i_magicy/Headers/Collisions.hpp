@@ -59,7 +59,36 @@ namespace Collision
         return Vector2<T>(0, temp.y);
     }
     
+    struct LineIntersection
+    {
+        bool areLinesIntersecting;
+        bool areLinesPararel;
+        bool areLinesColinear;
+        Vector2d intersection;
+    };
     
+    template<typename T>
+    LineIntersection intersectLines(const Vector2<T>& a1, const Vector2<T>& a2, const Vector2<T>& b1, const Vector2<T>& b2)
+    {
+        
+        Vector2<T> lineA = a2 - a1;
+        Vector2<T> lineB = b2 - b1;
+        
+        bool AcrossB = lineA.cross(lineB);
+        
+        Vector2<T> lineToLine = b1 - a1;
+        
+        
+        if(AcrossB == 0)
+        {
+            return {false, true, (lineToLine.cross(lineB) == 0), {0, 0}};
+        }
+        
+        double scalarA = lineToLine.cross(lineB) / AcrossB;
+        double scalarB = lineToLine.cross(lineA) / AcrossB;
+        
+        return {(std::abs(scalarA) <= 1 && std::abs(scalarB) <= 1), false, false, a1 + lineA * scalarA};
+    }
 };
 
 
