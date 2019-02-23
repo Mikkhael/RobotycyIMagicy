@@ -8,9 +8,9 @@ sf::RectangleShape tempActor;
 
 class Actor : public sf::Drawable, public SimpleTransformable
 {
-    Map* map;
 
 protected:
+    Map* map;
     Vector2d size;
     
     void setValidScaleAndOrigin(sf::Transformable& target, const Vector2d& targetSize) const

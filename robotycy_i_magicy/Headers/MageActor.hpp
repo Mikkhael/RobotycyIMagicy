@@ -4,6 +4,7 @@
 #include "Input.hpp"
 #include "Actor.hpp"
 #include "Animations.hpp"
+#include "LineCaster.hpp"
 
 class MageActor : public Actor
 {
@@ -61,6 +62,24 @@ public:
 
 class PlayerMageActor : public MageActor
 {
+protected:
+    Vector2d lineCastEnd;
+    
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
+    {
+        MageActor::draw(target, states);
+        //states.transform = states.transform.combine(getTransform());
+        
+        sf::VertexArray va(sf::Lines, 2);
+        va[0].position = getPosition();
+        va[1].position = lineCastEnd;
+        
+        va[0].color = sf::Color::Red;
+        va[1].color = sf::Color::Red;
+        
+        target.draw(va, states);
+    }
+    
 public:
     PlayerMageActor(Map& _map, const Vector2d& _pos = {0,0}, const Vector2d& _size = {32, 32})
         : MageActor(_map, _pos, _size)
@@ -77,6 +96,8 @@ public:
         rotateActorTo(Input::getMouseView());
         
         moveOutOfWalls();
+        
+        lineCastEnd = LineCast::cast(getPosition(), Input::getMouseView(), *map).contactPoint;
     }
     
     virtual ~PlayerMageActor(){};

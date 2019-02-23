@@ -61,6 +61,11 @@ public:
         return areCoordsGood(coords) ? getTile(coords).isWalkable() : false;
     }
     
+    bool isTileOpaque(const Vector2u& coords)
+    {
+        return !isTileWalkable(coords);
+    }
+    
     MapTile& getTile(unsigned int x, unsigned int y)
     {
         return grid[y][x];
