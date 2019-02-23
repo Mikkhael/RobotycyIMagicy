@@ -74,10 +74,9 @@ namespace Collision
         Vector2<T> lineA = a2 - a1;
         Vector2<T> lineB = b2 - b1;
         
-        bool AcrossB = lineA.cross(lineB);
+        double AcrossB = lineA.cross(lineB);
         
         Vector2<T> lineToLine = b1 - a1;
-        
         
         if(AcrossB == 0)
         {
@@ -87,7 +86,7 @@ namespace Collision
         double scalarA = lineToLine.cross(lineB) / AcrossB;
         double scalarB = lineToLine.cross(lineA) / AcrossB;
         
-        return {(std::abs(scalarA) <= 1 && std::abs(scalarB) <= 1), false, false, a1 + lineA * scalarA};
+        return {(scalarA >= 0 && scalarA <= 1 && scalarB >= 0&& scalarB <= 1), false, false, a1 + lineA * scalarA};
     }
 };
 
