@@ -6,10 +6,20 @@
 #include <map>
 #include <unordered_set>
 
-class MapTile : public sf::RectangleShape
+class MapTile : public sf::Drawable
 {
+    sf::RectangleShape sprite;
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const
+    {
+        if(type != Type::Black)
+        {
+            target.draw(sprite, states);
+        }
+    }
+    
 public:
     enum class Type {Grass1, Grass2, Path, Metal1, Metal2, Black};
+    
 private:
     
     const float size = 32;
@@ -25,7 +35,7 @@ public:
     void setType(Type _type)
     {
         type = _type;
-        setTextureRect(typeToTextureRect.at(type));
+        sprite.setTextureRect(typeToTextureRect.at(type));
     }
     
     bool isWalkable()
@@ -36,9 +46,9 @@ public:
     MapTile(int _size = 32, const Vector2u& _position = {0,0}, Type _type = Type::Black)
         : size(_size), position(_position)
     {
-        setSize({size, size});
-        setPosition(position * size);
-        setTexture(&textureManager.get("assets/textures.png"));
+        sprite.setSize({size, size});
+        sprite.setPosition(position * size);
+        sprite.setTexture(&textureManager.get("assets/textures.png"));
         setType(_type);
     }
     

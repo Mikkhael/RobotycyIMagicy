@@ -96,8 +96,6 @@ public:
         rotateActorTo(Input::getMouseView());
         
         moveOutOfWalls();
-        
-        lineCastEnd = LineCast::castOverMap(getPosition(), Input::getMouseView(), *map).contactPoint;
     }
     
     virtual ~PlayerMageActor(){};

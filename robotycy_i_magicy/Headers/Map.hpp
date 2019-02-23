@@ -91,6 +91,13 @@ public:
         }
     }
     
+    void setTileRects(MapTile::Type mapTileFill, const std::vector< sf::IntRect >& rects)
+    {
+        for(auto& rect : rects)
+        {
+            setTileRect(mapTileFill, rect);
+        }
+    }
     void setTileRectsWithBorder(MapTile::Type mapTileFill, MapTile::Type border, const std::vector< sf::IntRect >& rects)
     {
         for(auto& rect : rects)

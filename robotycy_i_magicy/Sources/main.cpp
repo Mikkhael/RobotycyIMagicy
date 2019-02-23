@@ -1,9 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "../Headers/Input.hpp"
-#include "../Headers/Map.hpp"
-#include "../Headers/MageActor.hpp"
-#include "../Headers/RobotActor.hpp"
+#include "../Headers/Scene.hpp"
 
 int main()
 {
@@ -23,8 +21,8 @@ int main()
     Input::addKeyMapping(Action::use,   sf::Keyboard::Space);
     Input::addKeyMapping(Action::use,   sf::Keyboard::E);
     Input::addKeyMapping(Action::use,   sf::Mouse::Right);
-    
-    Map map({30, 30}, 32);
+    /*
+    Map map({100, 100}, 32);
     map.setTileRectsWithBorder(MapTile::Type::Grass1, MapTile::Type::Metal1, {{3, 3, 5, 20}, {8, 17, 10, 3}});
     map.setTileRectsWithBorder(MapTile::Type::Path, MapTile::Type::Grass2, {{5, 2, 2, 30}});
     
@@ -41,6 +39,43 @@ int main()
     
     RobotCircleActor r2(map, {200, 400});
     
+    /**/
+    
+    /**/
+    Scene scene1( Vector2d(100, 100),
+                 Scene::MapTileData::List{
+                     Scene::MapTileData{
+                         MapTile::Type::Grass1, MapTile::Type::Metal1, std::vector<sf::IntRect>{sf::IntRect{3, 3, 5, 20}, sf::IntRect{8, 17, 10, 3}}
+                     },
+                     Scene::MapTileData{
+                         MapTile::Type::Path, MapTile::Type::Grass2, std::vector<sf::IntRect>{sf::IntRect{5, 2, 2, 30}}
+                     },
+                     Scene::MapTileData{
+                         MapTile::Type::Metal1, std::vector<sf::IntRect>{sf::IntRect{10, 10, 4, 4}}
+                     },
+                     Scene::MapTileData{
+                         MapTile::Type::Metal2, std::vector<sf::IntRect>{sf::IntRect{12, 12, 1, 1}}
+                     }
+                 },
+                 Scene::RobotData::List{
+                     Scene::RobotData{
+                         false, {200, 200}, {{250, 550}}, false
+                     },
+                     Scene::RobotData{
+                         true, {200, 400}, {}, false
+                     }
+                 },
+                 Scene::PlayerData::List{
+                     Scene::PlayerData{
+                        {100, 100}
+                     }
+                 }
+                 
+                 );
+    
+    scene1.load();
+    
+    /**/
     
     sf::Event event;
     sf::Clock clock;
@@ -64,18 +99,8 @@ int main()
         
         Input::updateKeyStates();
         
-        window.clear(sf::Color::Red);
-        
-        if(Input::isTapped(Action::use))
-        {
-            std::cout << Input::getMouseView() << std::endl;
-        }
-        
-        if(Input::isPressed(Action::shoot))
-        {
-            window.clear(sf::Color::Blue);
-        }
-        
+        window.clear(sf::Color::Black);
+        /*
         constexpr float speed = 3000;
         if(Input::isPressed(Action::use))
         {
@@ -110,10 +135,20 @@ int main()
         
         window.draw(x);
         window.draw(player);
+        /**/
+        
+        /**/
+        scene1.update(deltaTime);
+        
+        window.draw(scene1);
+        /**/
         
         window.draw(tempActor);
-        
+        std::cout << '\r' << (1/deltaTime) << " fps";
+        //std::cin.get();
         window.display();
+        
+        
     }
     
     return 0;
