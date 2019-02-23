@@ -97,7 +97,7 @@ public:
         
         moveOutOfWalls();
         
-        lineCastEnd = LineCast::cast(getPosition(), Input::getMouseView(), *map).contactPoint;
+        lineCastEnd = LineCast::castOverMap(getPosition(), Input::getMouseView(), *map).contactPoint;
     }
     
     virtual ~PlayerMageActor(){};
