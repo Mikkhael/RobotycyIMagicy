@@ -33,7 +33,7 @@ public:
     MageActor(Map& _map, const Vector2d& _pos = {0,0}, const Vector2d& _size = {32, 32})
         : Actor(_map, _pos, _size), bodySprite(AnimatedSpritePresets::MageWalk, AnimationState::Stop)
     {
-        hatSprite.setTexture(textureManager.get("assets/textures.png"));
+        hatSprite.setTexture(TextureManager::get("assets/textures.png"));
         hatSprite.setTextureRect({0, 48, 15, 15});
         setValidScaleAndOrigin(hatSprite, {15, 15});
         

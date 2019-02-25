@@ -128,7 +128,7 @@ public:
 	}	
 	
 	AnimatedSprite(const AnimatedSpritePreset& preset_, AnimationState state_ = Loop)
-		: sf::Sprite(textureManager.get(preset_.textureName)), preset(preset_), state(state_)
+		: sf::Sprite(TextureManager::get(preset_.textureName)), preset(preset_), state(state_)
 	{}
 	
 	void setPreset(const AnimatedSpritePreset& preset_, bool noReset = false)
@@ -136,7 +136,7 @@ public:
 		if(!preset.compare(preset_))
 		{
 			preset = preset_;
-			setTexture(textureManager.get(preset.textureName));
+			setTexture(TextureManager::get(preset.textureName));
 			if(!noReset)
 				reset();
 			updateTextureRect();

@@ -63,7 +63,6 @@
 		<Unit filename="Headers/MageActor.hpp" />
 		<Unit filename="Headers/Map.hpp" />
 		<Unit filename="Headers/MapTile.hpp" />
-		<Unit filename="Headers/Player.h" />
 		<Unit filename="Headers/RobotActor.hpp" />
 		<Unit filename="Headers/Scene.hpp" />
 		<Unit filename="Headers/TextureManager.hpp" />

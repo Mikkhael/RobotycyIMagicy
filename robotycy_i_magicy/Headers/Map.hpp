@@ -3,10 +3,14 @@
 
 #include "Vectors.hpp"
 #include "MapTile.hpp"
+#include "Scene.hpp"
+
+class Scene;
 
 class Map : public sf::Drawable, public SimpleTransformable
 {
     
+    Scene* scene;
     Vector2u size;
     std::vector<std::vector< MapTile > > grid;
     
@@ -125,8 +129,13 @@ public:
         return size;
     }
     
-    Map(const Vector2u& _size, int _tileSize = 32)
-        : size(_size), tileSize(_tileSize)
+    Scene& getScene()
+    {
+        return *scene;
+    }
+    
+    Map(Scene& _scene, const Vector2u& _size, int _tileSize = 32)
+        : scene(&_scene), size(_size), tileSize(_tileSize)
     {
         grid.reserve(size.y);
         for(unsigned int i=0u; i<size.y; i++)

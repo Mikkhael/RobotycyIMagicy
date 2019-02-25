@@ -29,7 +29,7 @@ public:
     RobotActor(Map& _map, const Vector2d& _pos = {0,0}, const Vector2d& _size = {32, 32})
         : Actor(_map, _pos, _size), bodySprite(AnimatedSpritePresets::RobotWalk, AnimationState::Stop)
     {
-        headSprite.setTexture(textureManager.get("assets/textures.png"));
+        headSprite.setTexture(TextureManager::get("assets/textures.png"));
         headSprite.setTextureRect({0, 80, 10, 11});
         setValidScaleAndOrigin(headSprite, {10, 11});
         
@@ -79,9 +79,9 @@ public:
     RobotCircleActor(Map& _map, const Vector2d& _pos = {0,0}, const Vector2d& _size = {64, 64})
         : Actor(_map, _pos, _size)
     {
-        bodySprite.setTexture(textureManager.get("assets/textures.png"));
+        bodySprite.setTexture(TextureManager::get("assets/textures.png"));
         bodySprite.setTextureRect({0, 96, 30, 30});
-        headSprite.setTexture(textureManager.get("assets/textures.png"));
+        headSprite.setTexture(TextureManager::get("assets/textures.png"));
         headSprite.setTextureRect({0, 128, 26, 26});
         setValidScaleAndOrigin(bodySprite, {30, 30});
         setValidScaleAndOrigin(headSprite, {26, 26});

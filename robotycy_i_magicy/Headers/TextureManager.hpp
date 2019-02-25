@@ -6,9 +6,9 @@ class TextureManager
 {
 public:
 	
-    std::map<const std::string, sf::Texture*> textures;
+    static std::map<const std::string, sf::Texture*> textures;
         
-    void load(const std::string& path, bool repeat = true)
+    static void load(const std::string& path, bool repeat = true)
     {
         sf::Image img;
         img.loadFromFile(path);
@@ -24,7 +24,7 @@ public:
     }
     
     
-    sf::Texture& get(const std::string& path, bool repeat = true)
+    static sf::Texture& get(const std::string& path, bool repeat = true)
     {
         if(textures.find(path) == textures.end())
         {
@@ -34,6 +34,7 @@ public:
     }
     
 };
-TextureManager textureManager;
+
+std::map<const std::string, sf::Texture*> TextureManager::textures;
 
 #endif // TEXTUREMANAGER_HPP_INCLUDED

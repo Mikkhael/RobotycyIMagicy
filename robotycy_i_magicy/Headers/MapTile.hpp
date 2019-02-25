@@ -48,7 +48,7 @@ public:
     {
         sprite.setSize({size, size});
         sprite.setPosition(position * size);
-        sprite.setTexture(&textureManager.get("assets/textures.png"));
+        sprite.setTexture(&TextureManager::get("assets/textures.png"));
         setType(_type);
     }
     

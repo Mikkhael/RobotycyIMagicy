@@ -144,7 +144,7 @@ public:
     
     Scene(const Vector2u& mapSize, MapTileData::ListR _mapTileDatas, RobotData::ListR _robotDatas, PlayerData::ListR _playerDatas)
         : 
-            map(mapSize, 32),
+            map(*this, mapSize, 32),
             mapTileDatas(_mapTileDatas),
             robotDatas(_robotDatas),
             playerDatas(_playerDatas)
