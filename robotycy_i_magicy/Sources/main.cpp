@@ -59,15 +59,19 @@ int main()
                  },
                  Scene::RobotData::List{
                      Scene::RobotData{
-                         false, {200, 200}, {{250, 550}}, false
+                         false, {3, 3}, {
+                         	{{3, 3}, 1},
+                         	{{4, 6}, 2},
+                         	{{7, 6}, 0},
+                         	}, false
                      },
                      Scene::RobotData{
-                         true, {200, 400}, {}, false
+                         true, {6, 12}, {}, false
                      }
                  },
                  Scene::PlayerData::List{
                      Scene::PlayerData{
-                        {100, 100}
+                        {4, 4}
                      }
                  }
                  

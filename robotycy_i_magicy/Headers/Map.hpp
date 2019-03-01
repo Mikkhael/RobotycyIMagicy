@@ -84,6 +84,12 @@ public:
         return sf::FloatRect( getPosition().x + coords.x * tileSize, getPosition().y + coords.y * tileSize, tileSize * getScale().x, tileSize * getScale().y);
     }
     
+    Vector2d getTileCenterPosition(const Vector2u& coords)
+    {
+    	sf::FloatRect rect = getTileRect(coords);
+    	return Vector2d(rect.left + rect.width/2, rect.top + rect.height/2);
+    }
+    
     void setTileRect(MapTile::Type mapTile, const sf::IntRect& rect)
     {
         for(int i=0; i<rect.height; i++)

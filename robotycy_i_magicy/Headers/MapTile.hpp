@@ -38,7 +38,7 @@ public:
         sprite.setTextureRect(typeToTextureRect.at(type));
     }
     
-    bool isWalkable()
+    bool isWalkable() const
     {
         return nonWalkableTypes.count(int(type)) <= 0;
     }

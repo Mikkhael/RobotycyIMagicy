@@ -19,24 +19,67 @@ protected:
         target.setScale(size.x / targetSize.x, size.y / targetSize.y);
     }
     
+    std::vector<std::pair<Vector2d, double> > patrolPath;
+    int pathIndex = 0;
+    double sleepCounter = 0;
+    bool onPatrolPath = false;
+    bool isDistracted = false;
+    Vector2d tempLastDestination;
     Vector2d destination;
     bool isWalking = false;
     
+    bool isAboutToGoToNextNodeOnPath = false;
     void walk(double deltaTime)
     {
-        if(isWalking)
-        {
-            Vector2d path = destination - getPosition();
-            if(path.magnatudeSquared() <= walkSpeed*walkSpeed * deltaTime*deltaTime)
-            {
-                setPosition(destination);
-                isWalking = false;
-            }
-            else
-            {
-                move(path.resize(walkSpeed * deltaTime));
-            }
-        }
+    	if(onPatrolPath)
+		{
+			if(isDistracted)
+			{
+				
+			}
+			else
+			{
+				if(sleepCounter > 0)
+				{
+					sleepCounter -= deltaTime;
+					return;
+				}
+				if(isAboutToGoToNextNodeOnPath)
+				{
+					pathIndex = (pathIndex+1) % patrolPath.size();
+					goToDestination(patrolPath[pathIndex].first);
+					isAboutToGoToNextNodeOnPath = false;
+				}
+				
+				Vector2d path = destination - getPosition();
+				if(path.magnatudeSquared() <= walkSpeed*walkSpeed * deltaTime*deltaTime)
+				{
+					setPosition(destination);
+					sleepCounter = patrolPath[pathIndex].second;
+					isAboutToGoToNextNodeOnPath = true;
+				}
+				else
+				{
+					move(path.resize(walkSpeed * deltaTime));
+				}
+			}
+		}
+		else
+		{
+			if(isWalking)
+			{
+				Vector2d path = destination - getPosition();
+				if(path.magnatudeSquared() <= walkSpeed*walkSpeed * deltaTime*deltaTime)
+				{
+					setPosition(destination);
+					isWalking = false;
+				}
+				else
+				{
+					move(path.resize(walkSpeed * deltaTime));
+				}
+			}
+		}
     }
     
     
@@ -112,6 +155,15 @@ public:
     
     double walkSpeed = 200;
     
+    void setPatrolPath(const std::vector<std::pair<Vector2d, double> >& _path)
+    {
+    	pathIndex = 0;
+        sleepCounter = 0;
+    	patrolPath = _path;
+    	isDistracted = false;
+    	onPatrolPath = true;
+    	goToDestination(patrolPath[0].first);
+    }
     
     void goToDestination(const Vector2d& dest, double ws = 0)
     {
@@ -140,6 +192,11 @@ public:
     virtual void update(double deltaTime)
     {
         walk(deltaTime);
+    }
+    
+    Scene& getScene()
+    {
+    	return map->getScene();
     }
     
     virtual ~Actor(){}
