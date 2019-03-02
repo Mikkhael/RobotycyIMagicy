@@ -4,6 +4,7 @@
 #include "Map.hpp"
 #include "MageActor.hpp"
 #include "RobotActor.hpp"
+#include "Cover.hpp"
 
 class Scene : public sf::Drawable
 {
@@ -15,6 +16,10 @@ class Scene : public sf::Drawable
             target.draw(*actor, states);
         }
         for(auto& actor : enemies)
+        {
+            target.draw(*actor, states);
+        }
+        for(auto& actor : covers)
         {
             target.draw(*actor, states);
         }
@@ -115,6 +120,8 @@ public:
     class PlayerData
     {
         Vector2u position;
+        int coversToPlace;
+        bool canPlaceDecoy;
         
     public:
         
@@ -122,8 +129,8 @@ public:
         using List = std::vector<PlayerData>;
         
         
-        PlayerData(const Vector2u& _position)
-            : position(_position)
+        PlayerData(const Vector2u& _position, int _coversToPlace, bool _canPlaceDecoy)
+            : position(_position), coversToPlace(_coversToPlace), canPlaceDecoy(_canPlaceDecoy)
         {}
         
         void addToScene(Scene& scene) const
@@ -131,6 +138,8 @@ public:
             if(!scene.player)
 			{
 				PlayerMageActor* p = new PlayerMageActor(scene.map, scene.map.getTileCenterPosition(position), {28, 28});
+				p->coversToPlace = coversToPlace;
+				p->canPlaceDecoy = canPlaceDecoy;
 				scene.player = p;
 			}
         }
@@ -139,6 +148,7 @@ public:
     Map map;
     PlayerMageActor* player = nullptr;
     std::vector<EnemyActor*> enemies;
+    std::vector<CoverActor*> covers;
     std::vector<Actor*> others;
     
     const MapTileData::List mapTileDatas;
@@ -152,13 +162,28 @@ public:
     
     bool checkIfEnemyCanSeePlayer(EnemyActor& enemy)
     {
-    	return enemy.canDetectOverMapAndRect(player->getPosition(), map, {0,0,0,0});
+    	if(enemy.canSeeOverMap(player->getPosition(), map))
+		{
+			for(auto& cover : covers)
+			{
+				if(!enemy.canSeeOverRect(player->getPosition(), cover->getRect()))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
     }
     
     void update(double deltaTime)
     {
     	bool isPlayerSeen = false;
         for(auto& actor : others)
+        {
+            actor->update(deltaTime);
+        }
+        for(auto& actor : covers)
         {
             actor->update(deltaTime);
         }
@@ -171,16 +196,41 @@ public:
 			}
         }
         player->update(deltaTime);
+        if(Input::isTapped(Action::putCover) && player->coversToPlace > 0)
+		{
+			Vector2i coords = map.positionToCoords(Input::getMouseView());
+			Vector2d position = map.getTileCenterPosition(coords);
+			//std::cout << position << "  " << (player->coversToPlace) << "   " << covers.size() << "   " << map.isTileWalkable(coords) << std::endl;
+			bool canPlace = map.isTileWalkable(coords);
+			for(int i=0; i<covers.size() && canPlace; i++)
+			{
+				if(covers[i]->getPosition() == position)
+				{
+					canPlace = false;
+				}
+			}
+			if(canPlace)
+			{
+				player->coversToPlace--;
+				covers.push_back(new CoverActor(map, position));
+			}
+		}
         if(isPlayerSeen)
 		{
-			std::cout << "TAK\n";
+			std::cout << "Seen" << std::endl;
 		}
         //std::cout << "UPDATED " << std::endl;
     }
     
     void load()
     {
-        for(auto& mapTileData : mapTileDatas)
+        setup();
+        //std::cout << "LOADED" << std::endl;
+    }
+    
+    void setup()
+    {
+    	for(auto& mapTileData : mapTileDatas)
         {
             mapTileData.addToScene(*this);
         }
@@ -192,7 +242,27 @@ public:
         {
             playerData.addToScene(*this);
         }
-        //std::cout << "LOADED" << std::endl;
+    }
+    
+    void clean()
+    {
+    	for(auto it = others.begin(); it != others.end(); it++)
+        {
+            delete *it;
+        }
+        for(auto it = enemies.begin(); it != enemies.end(); it++)
+        {
+            delete *it;
+        }
+        for(auto it = covers.begin(); it != covers.end(); it++)
+        {
+            delete *it;
+        }
+        if(player)
+		{
+			delete player;
+			player = nullptr;
+		}
     }
     
     Scene(const Vector2u& mapSize, MapTileData::ListR _mapTileDatas, RobotData::ListR _robotDatas, PlayerData::ListR _playerDatas)
@@ -206,16 +276,7 @@ public:
     
     ~Scene()
     {
-        for(auto it = others.begin(); it != others.end(); it++)
-        {
-            delete *it;
-        }
-        for(auto it = enemies.begin(); it != enemies.end(); it++)
-        {
-            delete *it;
-        }
-        delete player;
-        player = nullptr;
+        clean();
     }    
 };
 

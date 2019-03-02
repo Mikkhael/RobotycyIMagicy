@@ -11,7 +11,8 @@ enum Action
 	right,
 	up,
 	down,
-	shoot,
+	putCover,
+	putDecoy,
 	use
 };
 

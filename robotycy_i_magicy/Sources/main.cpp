@@ -9,18 +9,17 @@ int main()
     sf::RenderWindow window(sf::VideoMode(800, 600), "Tak");
     
     Input::bindWindow(window);
-    Input::addKeyMapping(Action::left,  sf::Keyboard::A);
-    Input::addKeyMapping(Action::left,  sf::Keyboard::Left);
-    Input::addKeyMapping(Action::right, sf::Keyboard::D);
-    Input::addKeyMapping(Action::right, sf::Keyboard::Right);
-    Input::addKeyMapping(Action::up,    sf::Keyboard::W);
-    Input::addKeyMapping(Action::up,    sf::Keyboard::Up);
-    Input::addKeyMapping(Action::down,  sf::Keyboard::S);
-    Input::addKeyMapping(Action::down,  sf::Keyboard::Down);
-    Input::addKeyMapping(Action::shoot, sf::Mouse::Left);
-    Input::addKeyMapping(Action::use,   sf::Keyboard::Space);
-    Input::addKeyMapping(Action::use,   sf::Keyboard::E);
-    Input::addKeyMapping(Action::use,   sf::Mouse::Right);
+    Input::addKeyMapping(Action::left,  		sf::Keyboard::A);
+    Input::addKeyMapping(Action::left,  		sf::Keyboard::Left);
+    Input::addKeyMapping(Action::right, 		sf::Keyboard::D);
+    Input::addKeyMapping(Action::right, 		sf::Keyboard::Right);
+    Input::addKeyMapping(Action::up,    		sf::Keyboard::W);
+    Input::addKeyMapping(Action::up,    		sf::Keyboard::Up);
+    Input::addKeyMapping(Action::down, 		 	sf::Keyboard::S);
+    Input::addKeyMapping(Action::down,  		sf::Keyboard::Down);
+    Input::addKeyMapping(Action::putCover, 		sf::Mouse::Left);
+    Input::addKeyMapping(Action::putDecoy,   	sf::Keyboard::Space);
+    Input::addKeyMapping(Action::use,   		sf::Keyboard::E);
     /*
     Map map({100, 100}, 32);
     map.setTileRectsWithBorder(MapTile::Type::Grass1, MapTile::Type::Metal1, {{3, 3, 5, 20}, {8, 17, 10, 3}});
@@ -64,14 +63,16 @@ int main()
                          	{{4, 6}, 2},
                          	{{7, 6}, 0},
                          	}, false
-                     }/*,
+                     },
                      Scene::RobotData{
                          true, {6, 12}, {}, false
-                     }*/
+                     }
                  },
                  Scene::PlayerData::List{
                      Scene::PlayerData{
-                        {4, 4}
+                        {4, 4},
+                        3,
+                        false
                      }
                  }
                  
@@ -89,6 +90,12 @@ int main()
     
     sf::View gameView({0,0,800,600});
     gameView.setViewport({0,0,1,1});
+    gameView.setCenter(400, 300);
+    
+    sf::View hudView({0,0,800,600});
+    hudView.setViewport({0,0,1,1});
+    hudView.setCenter(400, 300);
+    
     window.setView(gameView);
     
     
@@ -148,12 +155,16 @@ int main()
         /**/
         
         /**/
+        gameView.setCenter(scene1.getViewCenter());
+		window.setView(gameView);
+		
         scene1.update(deltaTime);
         
         
-        gameView.setCenter(scene1.getViewCenter());
-		window.setView(gameView);
         window.draw(scene1);
+        
+        window.setView(hudView);
+        
         /**/
         
         std::cout << '\r' << (1/deltaTime) << " fps";

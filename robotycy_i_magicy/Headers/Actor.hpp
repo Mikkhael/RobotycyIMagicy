@@ -198,6 +198,11 @@ public:
     	return map->getScene();
     }
     
+	sf::FloatRect getRect()
+	{
+		return sf::FloatRect(getPosition() - size/2, size);
+	}
+	
     virtual ~Actor(){}
 };
 

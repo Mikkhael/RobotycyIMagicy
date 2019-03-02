@@ -72,6 +72,11 @@ protected:
     }
     
 public:
+	
+	int coversToPlace = 0;
+	bool canPlaceDecoy = false;
+	
+	
     PlayerMageActor(Map& _map, const Vector2d& _pos = {0,0}, const Vector2d& _size = {32, 32})
         : MageActor(_map, _pos, _size)
     {        

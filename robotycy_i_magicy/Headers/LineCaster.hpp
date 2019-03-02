@@ -99,7 +99,7 @@ class Observer
 {
 	
 	static const sf::Color viewColor;
-	static constexpr unsigned int vertexCount = 16;
+	static constexpr unsigned int vertexCount = 32;
 	
 	sf::VertexArray viewField;
 	
@@ -126,7 +126,7 @@ public:
 	{
 		Vector2d position = getCastBeginPosition();
 		viewField[0].position = position;
-		double angleStep = 2 * viewAngle / (vertexCount-1);
+		double angleStep = 2 * viewAngle / (vertexCount-2);
 		double tempAngle = -viewAngle;
 		Vector2d foreward = getForewardVector() * viewDistance;
 		for(unsigned int i = 1u; i<vertexCount; i++)

@@ -38,6 +38,7 @@ namespace AnimatedSpritePresets
 {
 	const AnimatedSpritePreset	MageWalk		= AnimatedSpritePreset("assets/textures.png", sf::IntRect(16, 45, 7, 21), 	0.5, 		4);
 	const AnimatedSpritePreset	RobotWalk		= AnimatedSpritePreset("assets/textures.png", sf::IntRect(16, 80, 16, 15), 	0.2, 		2);
+	const AnimatedSpritePreset	CoverBlink		= AnimatedSpritePreset("assets/textures.png", sf::IntRect(0, 160, 16, 16), 	0.4, 		4);
 }
 
 class AnimatedSprite : public sf::Sprite
