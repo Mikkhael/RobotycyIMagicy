@@ -52,7 +52,7 @@ public:
         return {hit, to};
     }
     
-    static Result castOverMap(const Vector2d& from, Vector2d to, Map& map)
+    static Result castOverMap(const Vector2d& from, Vector2d to, Map& map, bool abortOnHit = false)
     {
         
         Vector2i fromCoords = map.positionToCoords(from);
@@ -64,7 +64,7 @@ public:
         
         Collision::LineIntersection tempLineIntersection;
         
-        bool hit = false;
+        bool hit = true;
         
         for(int i=std::max(testBoxStart.y, 0); i < testBoxEnd.y; i++)
         {
@@ -81,6 +81,10 @@ public:
                 {
                     hit = false;
                     to = res.contactPoint;
+                    if(abortOnHit)
+					{
+						return {hit, to};
+					}
                 }
             }
         }
@@ -90,5 +94,111 @@ public:
     }
     
 };
+
+class Observer
+{
+	
+	static const sf::Color viewColor;
+	static constexpr unsigned int vertexCount = 16;
+	
+	sf::VertexArray viewField;
+	
+public:
+	double closeupRadius;
+	double viewDistance;
+	double viewAngle;
+	double viewAngleCos;
+	
+	virtual Vector2d getForewardVector() const = 0;
+	virtual Vector2d getCastBeginPosition() const = 0;
+	
+	Observer(double _closeupRadius = 0, double _viewDistance = 0, double _viewAngle = 0)
+		: viewField(sf::PrimitiveType::TriangleFan, vertexCount), closeupRadius(_closeupRadius), viewDistance(_viewDistance)
+	{
+		setViewAngle(_viewAngle);
+		for(unsigned int i=0u; i<vertexCount; i++)
+		{
+			viewField[i].color = viewColor;
+		}
+	}
+	
+	void drawViewField(sf::RenderTarget& target, sf::RenderStates states)
+	{
+		Vector2d position = getCastBeginPosition();
+		viewField[0].position = position;
+		double angleStep = 2 * viewAngle / (vertexCount-1);
+		double tempAngle = -viewAngle;
+		Vector2d foreward = getForewardVector() * viewDistance;
+		for(unsigned int i = 1u; i<vertexCount; i++)
+		{
+			viewField[i].position = position + foreward.rotate(tempAngle);
+			tempAngle += angleStep;
+		}
+		target.draw(viewField, states);
+	}
+	
+	void setViewAngle(double angle)
+	{
+		viewAngle = angle;
+		viewAngleCos = std::cos(toRadians(angle));
+	}
+	
+	bool isInView(const Vector2d& target)
+	{
+		Vector2d toTarget = target - getCastBeginPosition();
+		if(toTarget.magnatudeSquared() > viewDistance*viewDistance)
+		{
+			return false;
+		}
+		return toTarget.normalize().dot(getForewardVector()) >= viewAngleCos;
+	}
+	
+	bool isInCloseup(const Vector2d& target)
+	{
+		Vector2d toTarget = target - getCastBeginPosition();
+		return toTarget.magnatudeSquared() <= closeupRadius*closeupRadius;
+	}
+	
+	bool canSeeOverRect(const Vector2d& to, const sf::FloatRect& rect)
+	{
+		if(isInView(to))
+		{
+			LineCast::Result res = LineCast::castWithRect(getCastBeginPosition(), to, rect);
+			return res.hit;
+		}
+		return false;
+		
+	}
+	bool canSeeOverMap(const Vector2d& to, Map& map)
+	{
+		if(isInView(to))
+		{
+			LineCast::Result res = LineCast::castOverMap(getCastBeginPosition(), to, map, true);
+			return res.hit;
+		}
+		return false;
+	}
+	
+	bool canDetectOverMapAndRect(const Vector2d& to, Map& map, const sf::FloatRect& rect)
+	{
+		if(isInCloseup(to))
+		{
+			return true;
+		}
+		if(!isInView(to))
+		{
+			return false;
+		}
+		LineCast::Result res = LineCast::castOverMap(getCastBeginPosition(), to, map, true);
+		if(!res.hit)
+		{
+			return false;
+		}
+		res = LineCast::castWithRect(getCastBeginPosition(), to, rect);
+		return res.hit;
+	}
+};
+
+const sf::Color Observer::viewColor{255, 0, 0, 30};
 
 #endif // LINECASTER_HPP_INCLUDED

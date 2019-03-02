@@ -69,15 +69,6 @@ protected:
     {
         MageActor::draw(target, states);
         //states.transform = states.transform.combine(getTransform());
-        
-        sf::VertexArray va(sf::Lines, 2);
-        va[0].position = getPosition();
-        va[1].position = lineCastEnd;
-        
-        va[0].color = sf::Color::Red;
-        va[1].color = sf::Color::Red;
-        
-        target.draw(va, states);
     }
     
 public:

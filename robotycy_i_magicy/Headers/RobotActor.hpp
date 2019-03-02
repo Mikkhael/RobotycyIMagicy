@@ -5,7 +5,7 @@
 #include "Actor.hpp"
 #include "Animations.hpp"
 
-class RobotActor : public Actor
+class RobotActor : public EnemyActor
 {
 protected:
     AnimatedSprite bodySprite;
@@ -27,7 +27,7 @@ protected:
 public:
     
     RobotActor(Map& _map, const Vector2d& _pos = {0,0}, const Vector2d& _size = {32, 32})
-        : Actor(_map, _pos, _size), bodySprite(AnimatedSpritePresets::RobotWalk, AnimationState::Stop)
+        : EnemyActor(_map, _pos, _size, 16, 320, 35), bodySprite(AnimatedSpritePresets::RobotWalk, AnimationState::Stop)
     {
         headSprite.setTexture(TextureManager::get("assets/textures.png"));
         headSprite.setTextureRect({0, 80, 10, 11});
@@ -38,6 +38,16 @@ public:
         walkSpeed = 100;
     }
     
+	virtual Vector2d getForewardVector() const
+	{
+		return Vectors::foreward.rotate(headSprite.getRotation() + 90);
+	}
+	
+	virtual Vector2d getCastBeginPosition() const
+	{
+		return getPosition();
+	}
+	
     virtual void update(double deltaTime)
     {
         Actor::update(deltaTime);
@@ -58,7 +68,7 @@ public:
     virtual ~RobotActor(){};
 };
 
-class RobotCircleActor : public Actor
+class RobotCircleActor : public EnemyActor
 {
     
 protected:
@@ -77,7 +87,7 @@ protected:
 public:
     
     RobotCircleActor(Map& _map, const Vector2d& _pos = {0,0}, const Vector2d& _size = {64, 64})
-        : Actor(_map, _pos, _size)
+        : EnemyActor(_map, _pos, _size, 16, 320, 180)
     {
         bodySprite.setTexture(TextureManager::get("assets/textures.png"));
         bodySprite.setTextureRect({0, 96, 30, 30});
@@ -87,6 +97,16 @@ public:
         setValidScaleAndOrigin(headSprite, {26, 26});
     }
     
+	virtual Vector2d getForewardVector() const
+	{
+		return Vectors::foreward;
+	}
+	
+	virtual Vector2d getCastBeginPosition() const
+	{
+		return getPosition();
+	}
+	
     virtual void update(double deltaTime)
     {
         Actor::update(deltaTime);

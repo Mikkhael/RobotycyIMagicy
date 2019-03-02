@@ -10,12 +10,21 @@ class Scene : public sf::Drawable
     void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         target.draw(map, states);
-        for(auto& actor : actors)
+        for(auto& actor : others)
         {
             target.draw(*actor, states);
         }
+        for(auto& actor : enemies)
+        {
+            target.draw(*actor, states);
+        }
+        for(auto& actor : enemies)
+        {
+			actor->drawViewField(target, states);
+        }
+        target.draw(*player, states);
         
-        //std::cout << "DREW " << actors.size() << " actors" << std::endl;
+        //std::cout << "DREW " << std::endl;
     }
 public:
     
@@ -73,7 +82,7 @@ public:
         {
             if(isCircle)
             {
-                scene.actors.push_back(new RobotCircleActor(scene.map, scene.map.getTileCenterPosition(position)));
+                scene.enemies.push_back(new RobotCircleActor(scene.map, scene.map.getTileCenterPosition(position)));
             }
             else
             {
@@ -98,7 +107,7 @@ public:
 					}
 					r->setPatrolPath(goodPath);
 				}
-                scene.actors.push_back(r);
+                scene.enemies.push_back(r);
             }
         }
     };
@@ -117,36 +126,56 @@ public:
             : position(_position)
         {}
         
-        PlayerMageActor* addToScene(Scene& scene) const
+        void addToScene(Scene& scene) const
         {
-            PlayerMageActor* p = new PlayerMageActor(scene.map, scene.map.getTileCenterPosition(position), {28, 28});
-            scene.actors.push_back(p);
-            return p;
+            if(!scene.player)
+			{
+				PlayerMageActor* p = new PlayerMageActor(scene.map, scene.map.getTileCenterPosition(position), {28, 28});
+				scene.player = p;
+			}
         }
     };
 
     Map map;
-    PlayerMageActor* player;
-    std::vector<Actor*> actors;
-    
-    PlayerMageActor& getPlayer()
-    {
-    	return *player;
-    }
-    
+    PlayerMageActor* player = nullptr;
+    std::vector<EnemyActor*> enemies;
+    std::vector<Actor*> others;
     
     const MapTileData::List mapTileDatas;
     const RobotData::List robotDatas;
     const PlayerData::List playerDatas;
     
+    Vector2d getViewCenter()
+    {
+    	return player->getPosition() + (Input::getMouseView() - player->getPosition()) * 0.3;
+    }
+    
+    bool checkIfEnemyCanSeePlayer(EnemyActor& enemy)
+    {
+    	return enemy.canDetectOverMapAndRect(player->getPosition(), map, {0,0,0,0});
+    }
     
     void update(double deltaTime)
     {
-        for(auto& actor : actors)
+    	bool isPlayerSeen = false;
+        for(auto& actor : others)
         {
             actor->update(deltaTime);
         }
-        //std::cout << "UPDATED " << actors.size() << " actors" << std::endl;
+        for(auto& actor : enemies)
+        {
+            actor->update(deltaTime);
+            if(!isPlayerSeen && checkIfEnemyCanSeePlayer(*actor))
+			{
+				isPlayerSeen = true;
+			}
+        }
+        player->update(deltaTime);
+        if(isPlayerSeen)
+		{
+			std::cout << "TAK\n";
+		}
+        //std::cout << "UPDATED " << std::endl;
     }
     
     void load()
@@ -161,8 +190,9 @@ public:
         }
         for(auto& playerData : playerDatas)
         {
-            player = playerData.addToScene(*this);
+            playerData.addToScene(*this);
         }
+        //std::cout << "LOADED" << std::endl;
     }
     
     Scene(const Vector2u& mapSize, MapTileData::ListR _mapTileDatas, RobotData::ListR _robotDatas, PlayerData::ListR _playerDatas)
@@ -176,10 +206,16 @@ public:
     
     ~Scene()
     {
-        for(auto it = actors.begin(); it != actors.end(); it++)
+        for(auto it = others.begin(); it != others.end(); it++)
         {
             delete *it;
         }
+        for(auto it = enemies.begin(); it != enemies.end(); it++)
+        {
+            delete *it;
+        }
+        delete player;
+        player = nullptr;
     }    
 };
 

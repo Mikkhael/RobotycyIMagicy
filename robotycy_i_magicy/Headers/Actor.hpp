@@ -3,8 +3,7 @@
 
 #include "Map.hpp"
 #include "Collisions.hpp"
-
-sf::RectangleShape tempActor;
+#include "LineCaster.hpp"
 
 class Actor : public sf::Drawable, public SimpleTransformable
 {
@@ -200,6 +199,15 @@ public:
     }
     
     virtual ~Actor(){}
+};
+
+class EnemyActor : public Actor, public Observer
+{
+public:
+	EnemyActor(Map& _map, const Vector2d& _pos = {0,0}, const Vector2d& _size = {0, 0}, double _closeupRadius = 0, double _viewDistance = 0, double _viewAngle = 0)
+		: Actor(_map, _pos, _size), Observer(_closeupRadius, _viewDistance, _viewAngle)
+	{
+	}
 };
 
 #endif // ACTOR_HPP_INCLUDED

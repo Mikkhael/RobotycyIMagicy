@@ -64,10 +64,10 @@ int main()
                          	{{4, 6}, 2},
                          	{{7, 6}, 0},
                          	}, false
-                     },
+                     }/*,
                      Scene::RobotData{
                          true, {6, 12}, {}, false
-                     }
+                     }*/
                  },
                  Scene::PlayerData::List{
                      Scene::PlayerData{
@@ -85,6 +85,12 @@ int main()
     sf::Clock clock;
     sf::Time elapsedTime, lastTime;
     float deltaTime = 0;
+    
+    
+    sf::View gameView({0,0,800,600});
+    gameView.setViewport({0,0,1,1});
+    window.setView(gameView);
+    
     
     while(window.isOpen())
     {
@@ -144,10 +150,12 @@ int main()
         /**/
         scene1.update(deltaTime);
         
+        
+        gameView.setCenter(scene1.getViewCenter());
+		window.setView(gameView);
         window.draw(scene1);
         /**/
         
-        window.draw(tempActor);
         std::cout << '\r' << (1/deltaTime) << " fps";
         //std::cin.get();
         window.display();
