@@ -64,16 +64,16 @@ int main()
                          	{{4, 6}, 2},
                          	{{7, 6}, 0},
                          	}, false
-                     },
+                     }/*,
                      Scene::RobotData{
                          true, {6, 12}, {}, false
-                     }
+                     }*/
                  },
                  Scene::PlayerData::List{
                      Scene::PlayerData{
                         {4, 4},
                         3,
-                        false
+                        3
                      }
                  }
                  

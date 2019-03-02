@@ -23,18 +23,57 @@ protected:
     double sleepCounter = 0;
     bool onPatrolPath = false;
     bool isDistracted = false;
+    bool reachedDistraction = false;
     Vector2d tempLastDestination;
+    Vector2d tempLastPosition;
     Vector2d destination;
     bool isWalking = false;
     
     bool isAboutToGoToNextNodeOnPath = false;
+    bool isAboutToReachDistraction = false;
     void walk(double deltaTime)
     {
+    	if(walkSpeed == 0)
+		{
+			return;
+		}
     	if(onPatrolPath)
 		{
 			if(isDistracted)
 			{
+				if(sleepCounter > 0)
+				{
+					sleepCounter -= deltaTime;
+					return;
+				}
 				
+				if(isAboutToReachDistraction)
+				{
+					reachedDistraction = true;
+					isAboutToReachDistraction = false;
+					goToDestination(tempLastPosition);
+				}
+				
+				Vector2d path = destination - getPosition();
+				if(path.magnatudeSquared() <= walkSpeed*walkSpeed * deltaTime*deltaTime)
+				{
+					setPosition(destination);
+					if(reachedDistraction)
+					{
+						isDistracted = false;
+						getUndistracted();
+						goToDestination(tempLastDestination);
+					}
+					else
+					{
+						isAboutToReachDistraction = true;
+						sleepCounter = sleepAfterReachingDistraction;
+					}
+				}
+				else
+				{
+					move(path.resize(walkSpeed * deltaTime));
+				}
 			}
 			else
 			{
@@ -80,8 +119,6 @@ protected:
 			}
 		}
     }
-    
-    
     
     bool moveOutOfWalls()
     {
@@ -164,6 +201,27 @@ public:
     	goToDestination(patrolPath[0].first);
     }
     
+    int sleepBeforeGoingToDistraction = 0;
+    int sleepAfterReachingDistraction = 0;
+    void goToDistraction(const Vector2d& target)
+    {
+    	if(walkSpeed <= 0)
+		{
+			return;
+		}
+		
+    	getDistracted();
+    	isDistracted = true;
+    	reachedDistraction = false;
+    	tempLastDestination = destination;
+    	tempLastPosition = getPosition();
+    	goToDestination(target);
+    	sleepCounter = sleepBeforeGoingToDistraction;
+    }
+    virtual void getDistracted(){}
+    virtual void getUndistracted(){}
+    
+    
     void goToDestination(const Vector2d& dest, double ws = 0)
     {
         destination = dest;
@@ -176,16 +234,13 @@ public:
         }
     }
     
-    
-    
-    void stopWalking()
-    {
-        isWalking = false;
-    }
-    
     bool isActorWalking() const
     {
         return isWalking;
+    }
+    bool isActorDistracted()
+    {
+    	return isDistracted;
     }
     
     virtual void update(double deltaTime)

@@ -161,40 +161,13 @@ public:
 	
 	bool canSeeOverRect(const Vector2d& to, const sf::FloatRect& rect)
 	{
-		if(isInView(to))
-		{
-			LineCast::Result res = LineCast::castWithRect(getCastBeginPosition(), to, rect);
-			return res.hit;
-		}
-		return false;
+		LineCast::Result res = LineCast::castWithRect(getCastBeginPosition(), to, rect);
+		return res.hit;
 		
 	}
 	bool canSeeOverMap(const Vector2d& to, Map& map)
 	{
-		if(isInView(to))
-		{
-			LineCast::Result res = LineCast::castOverMap(getCastBeginPosition(), to, map, true);
-			return res.hit;
-		}
-		return false;
-	}
-	
-	bool canDetectOverMapAndRect(const Vector2d& to, Map& map, const sf::FloatRect& rect)
-	{
-		if(isInCloseup(to))
-		{
-			return true;
-		}
-		if(!isInView(to))
-		{
-			return false;
-		}
 		LineCast::Result res = LineCast::castOverMap(getCastBeginPosition(), to, map, true);
-		if(!res.hit)
-		{
-			return false;
-		}
-		res = LineCast::castWithRect(getCastBeginPosition(), to, rect);
 		return res.hit;
 	}
 };

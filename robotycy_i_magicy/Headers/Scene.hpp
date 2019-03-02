@@ -5,6 +5,7 @@
 #include "MageActor.hpp"
 #include "RobotActor.hpp"
 #include "Cover.hpp"
+#include "DecoyActor.hpp"
 
 class Scene : public sf::Drawable
 {
@@ -12,6 +13,10 @@ class Scene : public sf::Drawable
     {
         target.draw(map, states);
         for(auto& actor : others)
+        {
+            target.draw(*actor, states);
+        }
+        for(auto& actor : decoys)
         {
             target.draw(*actor, states);
         }
@@ -149,6 +154,7 @@ public:
     PlayerMageActor* player = nullptr;
     std::vector<EnemyActor*> enemies;
     std::vector<CoverActor*> covers;
+    std::vector<DecoyActor*> decoys;
     std::vector<Actor*> others;
     
     const MapTileData::List mapTileDatas;
@@ -160,13 +166,22 @@ public:
     	return player->getPosition() + (Input::getMouseView() - player->getPosition()) * 0.3;
     }
     
-    bool checkIfEnemyCanSeePlayer(EnemyActor& enemy)
+    
+    bool checkIfEnemyCanSeePoint(EnemyActor& enemy, const Vector2d& point)
     {
+    	if(enemy.isInCloseup(point))
+		{
+			return true;
+		}
+		if(!enemy.isInView(point))
+		{
+			return false;
+		}
     	if(enemy.canSeeOverMap(player->getPosition(), map))
 		{
 			for(auto& cover : covers)
 			{
-				if(!enemy.canSeeOverRect(player->getPosition(), cover->getRect()))
+				if(!enemy.canSeeOverRect(point, cover->getRect()))
 				{
 					return false;
 				}
@@ -174,6 +189,22 @@ public:
 			return true;
 		}
 		return false;
+    }
+    bool checkIfEnemyCanSeePlayer(EnemyActor& enemy)
+    {
+    	return checkIfEnemyCanSeePoint(enemy, player->getPosition());
+    }
+    
+    DecoyActor* checkIfEnemySeesDecoy(EnemyActor& enemy)
+    {
+    	for(int i=0; i<decoys.size(); i++)
+		{
+			if(decoys[i]->isActive && checkIfEnemyCanSeePoint(enemy, decoys[i]->getPosition()))
+			{
+				return decoys[i];
+			}
+		}
+		return nullptr;
     }
     
     void update(double deltaTime)
@@ -187,15 +218,44 @@ public:
         {
             actor->update(deltaTime);
         }
+        for(auto& actor : decoys)
+        {
+            actor->update(deltaTime);
+        }
         for(auto& actor : enemies)
         {
             actor->update(deltaTime);
+        }
+        player->update(deltaTime);
+        
+        
+        for(auto& actor : enemies)
+        {
             if(!isPlayerSeen && checkIfEnemyCanSeePlayer(*actor))
 			{
 				isPlayerSeen = true;
+				break;
 			}
         }
-        player->update(deltaTime);
+        if(isPlayerSeen)
+		{
+			//std::cout << "Seen" << std::endl;
+		}
+		
+        for(auto& enemy : enemies)
+        {
+        	if(enemy->isActorDistracted())
+			{
+				continue;
+			}
+            DecoyActor* decoy = checkIfEnemySeesDecoy(*enemy);
+            if(decoy)
+			{
+				decoy->setInactive();
+				enemy->goToDistraction(decoy->getPosition());
+			}
+        }
+		
         if(Input::isTapped(Action::putCover) && player->coversToPlace > 0)
 		{
 			Vector2i coords = map.positionToCoords(Input::getMouseView());
@@ -215,10 +275,13 @@ public:
 				covers.push_back(new CoverActor(map, position));
 			}
 		}
-        if(isPlayerSeen)
+		
+		if(Input::isTapped(Action::putDecoy) && player->decoysToPlace > 0)
 		{
-			//std::cout << "Seen" << std::endl;
+			player->decoysToPlace--;
+			decoys.push_back(new DecoyActor(map, player->getPosition()));
 		}
+		
         //std::cout << "UPDATED " << std::endl;
     }
     
@@ -255,6 +318,10 @@ public:
             delete *it;
         }
         for(auto it = covers.begin(); it != covers.end(); it++)
+        {
+            delete *it;
+        }
+        for(auto it = decoys.begin(); it != decoys.end(); it++)
         {
             delete *it;
         }

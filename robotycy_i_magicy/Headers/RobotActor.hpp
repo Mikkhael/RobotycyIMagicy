@@ -36,6 +36,8 @@ public:
         setValidScaleAndOrigin(bodySprite, {16, 15});
         
         walkSpeed = 100;
+        sleepBeforeGoingToDistraction = 1.5;
+        sleepAfterReachingDistraction = 1;
     }
     
 	virtual Vector2d getForewardVector() const
@@ -46,6 +48,15 @@ public:
 	virtual Vector2d getCastBeginPosition() const
 	{
 		return getPosition();
+	}
+	
+	virtual void getDistracted()
+	{
+		headSprite.setTextureRect({0, 64, 10, 11});
+	}
+	virtual void getUndistracted()
+	{
+		headSprite.setTextureRect({0, 80, 10, 11});
 	}
 	
     virtual void update(double deltaTime)
@@ -95,6 +106,7 @@ public:
         headSprite.setTextureRect({0, 128, 26, 26});
         setValidScaleAndOrigin(bodySprite, {30, 30});
         setValidScaleAndOrigin(headSprite, {26, 26});
+        walkSpeed = 0;
     }
     
 	virtual Vector2d getForewardVector() const

@@ -57,6 +57,9 @@
 		<Unit filename="Headers/Actor.hpp" />
 		<Unit filename="Headers/Animations.hpp" />
 		<Unit filename="Headers/Collisions.hpp" />
+		<Unit filename="Headers/Cover.hpp" />
+		<Unit filename="Headers/DecoyActor.hpp" />
+		<Unit filename="Headers/HUD.hpp" />
 		<Unit filename="Headers/Input.hpp" />
 		<Unit filename="Headers/LineCaster.hpp" />
 		<Unit filename="Headers/MageActor.hpp" />
