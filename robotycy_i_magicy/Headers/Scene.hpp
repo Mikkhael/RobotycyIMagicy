@@ -121,7 +121,7 @@ public:
     {
         Vector2u position;
         int coversToPlace;
-        bool canPlaceDecoy;
+        int decoysToPlace;
         
     public:
         
@@ -129,8 +129,8 @@ public:
         using List = std::vector<PlayerData>;
         
         
-        PlayerData(const Vector2u& _position, int _coversToPlace, bool _canPlaceDecoy)
-            : position(_position), coversToPlace(_coversToPlace), canPlaceDecoy(_canPlaceDecoy)
+        PlayerData(const Vector2u& _position, int _coversToPlace, int _decoysToPlace)
+            : position(_position), coversToPlace(_coversToPlace), decoysToPlace(_decoysToPlace)
         {}
         
         void addToScene(Scene& scene) const
@@ -139,7 +139,7 @@ public:
 			{
 				PlayerMageActor* p = new PlayerMageActor(scene.map, scene.map.getTileCenterPosition(position), {28, 28});
 				p->coversToPlace = coversToPlace;
-				p->canPlaceDecoy = canPlaceDecoy;
+				p->decoysToPlace = decoysToPlace;
 				scene.player = p;
 			}
         }
@@ -217,7 +217,7 @@ public:
 		}
         if(isPlayerSeen)
 		{
-			std::cout << "Seen" << std::endl;
+			//std::cout << "Seen" << std::endl;
 		}
         //std::cout << "UPDATED " << std::endl;
     }

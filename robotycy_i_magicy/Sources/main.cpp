@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "../Headers/Input.hpp"
 #include "../Headers/Scene.hpp"
+#include "../Headers/HUD.hpp"
 
 int main()
 {
@@ -92,12 +93,9 @@ int main()
     gameView.setViewport({0,0,1,1});
     gameView.setCenter(400, 300);
     
-    sf::View hudView({0,0,800,600});
-    hudView.setViewport({0,0,1,1});
-    hudView.setCenter(400, 300);
-    
     window.setView(gameView);
     
+    HUD hud;
     
     while(window.isOpen())
     {
@@ -162,8 +160,8 @@ int main()
         
         
         window.draw(scene1);
-        
-        window.setView(hudView);
+        hud.updateValuesFromScene(scene1);
+        window.draw(hud);
         
         /**/
         
