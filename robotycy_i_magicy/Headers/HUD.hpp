@@ -20,12 +20,32 @@ class HUD : public sf::Drawable
 	{
 		sf::View lastView = target.getView();
 		target.setView(hudView);
-		target.draw(coverSprite, states);
-		target.draw(coverText, states);
-		target.draw(decoySprite, states);
-		target.draw(decoyText, states);
+		if(covers > 0)
+		{
+			target.draw(coverSprite, states);
+			target.draw(coverText, states);
+		}
+		if(decoys > 0)
+		{
+			target.draw(decoySprite, states);
+			target.draw(decoyText, states);
+		}
 		target.setView(lastView);
 	}
+	
+	int covers = 0;
+	int decoys = 0;
+	
+	void updateText()
+	{
+		std::stringstream ss;
+		ss << "x" << covers;
+		coverText.setString(ss.str());
+		ss.str("");
+		ss << "x" << decoys;
+		decoyText.setString(ss.str());
+	}
+	
 	
 public:
 	HUD()
@@ -67,14 +87,11 @@ public:
 		}
 	}
 	
-	void updateValues(int covers, int decoys)
+	void updateValues(int covers_, int decoys_)
 	{
-		std::stringstream ss;
-		ss << "x" << covers;
-		coverText.setString(ss.str());
-		ss.str("");
-		ss << "x" << decoys;
-		decoyText.setString(ss.str());
+		covers = covers_;
+		decoys = decoys_;
+		updateText();
 	}
 };
 
