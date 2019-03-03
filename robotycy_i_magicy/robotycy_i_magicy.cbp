@@ -56,6 +56,7 @@
 		</Linker>
 		<Unit filename="Headers/Actor.hpp" />
 		<Unit filename="Headers/Animations.hpp" />
+		<Unit filename="Headers/BookActor.hpp" />
 		<Unit filename="Headers/Collisions.hpp" />
 		<Unit filename="Headers/Cover.hpp" />
 		<Unit filename="Headers/DecoyActor.hpp" />

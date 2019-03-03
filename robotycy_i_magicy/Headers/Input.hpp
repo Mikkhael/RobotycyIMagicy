@@ -73,6 +73,7 @@ class Input
 	
 	static sf::RenderWindow* bindedWindow;
 	
+	static Vector2f mousePositionInWindow;
 public:
 	
 	static void clearKeyMapping(Action action)
@@ -98,6 +99,15 @@ public:
 		
 	static void updateKeyStates()
 	{
+		if(bindedWindow)
+		{
+			Vector2f mousePosition = getMouseWindow(false);
+			std::cout << mousePosition << std::endl;
+			if(mousePosition.x >= 0 && mousePosition.x <= bindedWindow->getSize().x && mousePosition.y >= 0 && mousePosition.y <= bindedWindow->getSize().y)
+			{
+				mousePositionInWindow = mousePosition;
+			}
+		}
 		for(auto& keyMap : inputMap)
 		{
 			bool isPressed = false;
@@ -165,21 +175,25 @@ public:
 	{
 		return sf::Mouse::getPosition(rw);
 	}
-	static Vector2f getMouseWindow()
+	static Vector2f getMouseWindow(bool obayBorders = true)
 	{
 		if(!bindedWindow)
 			return Vector2f(0,0);
+		if(obayBorders)
+		{
+			return mousePositionInWindow;
+		}
 		return sf::Mouse::getPosition(*bindedWindow);
 	}
 	static Vector2f getMouseView(const sf::RenderWindow& rw)
 	{
 		return rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
 	}
-	static Vector2f getMouseView()
+	static Vector2f getMouseView(bool obayBorders = true)
 	{
 		if(!bindedWindow)
 			return Vector2f(0,0);
-		return bindedWindow->mapPixelToCoords(sf::Mouse::getPosition(*bindedWindow));
+		return bindedWindow->mapPixelToCoords(getMouseWindow(obayBorders));
 	}
 	static Vector2f getDirectionAxis()
 	{
@@ -193,5 +207,6 @@ std::map<Action, Input::KeyState>						    Input::actionStates;
 
 sf::RenderWindow* Input::bindedWindow;
 
+Vector2f Input::mousePositionInWindow(0,0);
 
 #endif // INPUT_HPP_INCLUDED

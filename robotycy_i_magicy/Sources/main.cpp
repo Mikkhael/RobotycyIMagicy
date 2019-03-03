@@ -9,6 +9,8 @@ int main()
     
     sf::RenderWindow window(sf::VideoMode(800, 600), "Tak");
     
+    bool isWindowFocused = true;
+    
     Input::bindWindow(window);
     Input::addKeyMapping(Action::left,  		sf::Keyboard::A);
     Input::addKeyMapping(Action::left,  		sf::Keyboard::Left);
@@ -88,6 +90,14 @@ int main()
             {
                 window.close();
             }
+            else if(event.type == sf::Event::GainedFocus)
+			{
+				isWindowFocused = true;
+			}
+			else if(event.type == sf::Event::LostFocus)
+			{
+				isWindowFocused = false;
+			}
         }
         
         elapsedTime = clock.getElapsedTime();
@@ -101,17 +111,19 @@ int main()
         /**/
         
         
-        if(Input::isTapped(Action::restart))
+        
+        if(isWindowFocused)
 		{
-			scene1.restart();
+			if(Input::isTapped(Action::restart))
+			{
+				scene1.restart();
+			}
+			
+			gameView.setCenter(scene1.getViewCenter());
+			window.setView(gameView);
+			
+			scene1.update(deltaTime);
 		}
-        
-        
-        gameView.setCenter(scene1.getViewCenter());
-		window.setView(gameView);
-		
-        scene1.update(deltaTime);
-        
         
         window.draw(scene1);
         hud.updateValuesFromScene(scene1);
