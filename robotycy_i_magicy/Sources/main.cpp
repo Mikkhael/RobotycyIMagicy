@@ -69,12 +69,12 @@ int main()
                          true, {6, 12}, {}, false
                      }*/
                  },
+                 Scene::BookData::List{
+                 	Scene::BookData{{17, 17}, 3, BookActor::Type::Cover},
+                 	Scene::BookData{{17, 19}, 3, BookActor::Type::Decoy}
+                 },
                  Scene::PlayerData::List{
-                     Scene::PlayerData{
-                        {4, 4},
-                        3,
-                        3
-                     }
+                     Scene::PlayerData{ {4, 4}, 0, 0 }
                  }
                  
                  );

@@ -25,12 +25,16 @@ class Map : public sf::Drawable, public SimpleTransformable
             }
         }
     }
-    
+	
 public:
     
     const float tileSize;
     
-    Vector2d positionToCoords(const Vector2d& position) const
+    Vector2d positionToCoordsFluid(const Vector2d& position) const
+    {
+        return (position - getPosition()) / tileSize;
+    }
+    Vector2i positionToCoords(const Vector2d& position) const
     {
         return (position - getPosition()) / tileSize;
     }

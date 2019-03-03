@@ -6,6 +6,7 @@
 #include "RobotActor.hpp"
 #include "Cover.hpp"
 #include "DecoyActor.hpp"
+#include "BookActor.hpp"
 
 class Scene : public sf::Drawable
 {
@@ -13,6 +14,10 @@ class Scene : public sf::Drawable
     {
         target.draw(map, states);
         for(auto& actor : others)
+        {
+            target.draw(*actor, states);
+        }
+        for(auto& actor : books)
         {
             target.draw(*actor, states);
         }
@@ -149,17 +154,41 @@ public:
 			}
         }
     };
+    
+    class BookData
+    {
+    	Vector2u position;
+    	int charge;
+    	BookActor::Type type;
+    	
+	public:
+		
+        using ListR = const std::vector<BookData>&;
+        using List = std::vector<BookData>;
+        
+		BookData(const Vector2u& _position, int _charge, BookActor::Type _type)
+            : position(_position), charge(_charge), type(_type)
+        {}
+        
+        void addToScene(Scene& scene) const
+        {
+            scene.books.push_back(new BookActor(type, charge, scene.map, scene.map.getTileCenterPosition(position)));
+        }
+		
+    };
 
     Map map;
     PlayerMageActor* player = nullptr;
     std::vector<EnemyActor*> enemies;
     std::vector<CoverActor*> covers;
     std::vector<DecoyActor*> decoys;
+    std::vector<BookActor*> books;
     std::vector<Actor*> others;
     
     const MapTileData::List mapTileDatas;
     const RobotData::List robotDatas;
     const PlayerData::List playerDatas;
+    const BookData::List bookDatas;
     
     Vector2d getViewCenter()
     {
@@ -214,6 +243,10 @@ public:
         {
             actor->update(deltaTime);
         }
+        for(auto& actor : books)
+        {
+            actor->update(deltaTime);
+        }
         for(auto& actor : covers)
         {
             actor->update(deltaTime);
@@ -255,6 +288,17 @@ public:
 				enemy->goToDistraction(decoy->getPosition());
 			}
         }
+        for(auto& book : books)
+        {
+        	if(book->isTaken())
+			{
+				continue;
+			}
+            if(map.positionToCoords(book->getPosition()) == map.positionToCoords(player->getPosition()))
+			{
+				book->pickUp(*player);
+			}
+        }
 		
         if(Input::isTapped(Action::putCover) && player->coversToPlace > 0)
 		{
@@ -293,17 +337,21 @@ public:
     
     void setup()
     {
-    	for(auto& mapTileData : mapTileDatas)
+    	for(auto& data : mapTileDatas)
         {
-            mapTileData.addToScene(*this);
+            data.addToScene(*this);
         }
-        for(auto& robotData : robotDatas)
+        for(auto& data : robotDatas)
         {
-            robotData.addToScene(*this);
+            data.addToScene(*this);
         }
-        for(auto& playerData : playerDatas)
+        for(auto& data : playerDatas)
         {
-            playerData.addToScene(*this);
+            data.addToScene(*this);
+        }
+        for(auto& data : bookDatas)
+        {
+            data.addToScene(*this);
         }
     }
     
@@ -325,6 +373,10 @@ public:
         {
             delete *it;
         }
+        for(auto it = books.begin(); it != books.end(); it++)
+        {
+            delete *it;
+        }
         if(player)
 		{
 			delete player;
@@ -332,12 +384,13 @@ public:
 		}
     }
     
-    Scene(const Vector2u& mapSize, MapTileData::ListR _mapTileDatas, RobotData::ListR _robotDatas, PlayerData::ListR _playerDatas)
+    Scene(const Vector2u& mapSize, MapTileData::ListR _mapTileDatas, RobotData::ListR _robotDatas, BookData::ListR _bookDatas, PlayerData::ListR _playerDatas)
         : 
             map(*this, mapSize, 32),
             mapTileDatas(_mapTileDatas),
             robotDatas(_robotDatas),
-            playerDatas(_playerDatas)
+            playerDatas(_playerDatas),
+            bookDatas(_bookDatas)
     {
     }
     
