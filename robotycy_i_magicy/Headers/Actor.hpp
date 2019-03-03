@@ -253,6 +253,11 @@ public:
     	return map->getScene();
     }
     
+    Vector2i getCoords()
+    {
+    	return map->positionToCoords(getPosition());
+    }
+    
 	sf::FloatRect getRect()
 	{
 		return sf::FloatRect(getPosition() - size/2, size);

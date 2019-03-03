@@ -13,6 +13,7 @@ class HUD : public sf::Drawable
 	sf::Text decoyText;
 	
 	sf::RectangleShape gameLostScreen;
+	sf::RectangleShape gameWonScreen;
 	
 	sf::Font font;
     
@@ -22,6 +23,7 @@ class HUD : public sf::Drawable
 	int covers = 0;
 	int decoys = 0;
 	bool isGameLost = false;
+	bool isGameWon = false;
 	
 	void updateText()
 	{
@@ -40,6 +42,10 @@ class HUD : public sf::Drawable
 		if(isGameLost)
 		{
 			target.draw(gameLostScreen, states);
+		}
+		else if(isGameWon)
+		{
+			target.draw(gameWonScreen, states);
 		}
 		else
 		{
@@ -90,23 +96,27 @@ public:
 		
 		gameLostScreen.setTexture(&TextureManager::get("assets/gameLostScreen.bmp"));
 		gameLostScreen.setSize({800, 600});
+		
+		gameWonScreen.setTexture(&TextureManager::get("assets/gameWonScreen.bmp"));
+		gameWonScreen.setSize({800, 600});
 	}
 	
 	void updateValuesFromScene(Scene& scene)
 	{
 		if(scene.player)
 		{
-			updateValues(scene.player->coversToPlace, scene.player->decoysToPlace, scene.isGameLost);
+			updateValues(scene.player->coversToPlace, scene.player->decoysToPlace, scene.isGameLost, scene.isGameWon);
 		}
 	}
 	
-	void updateValues(int covers_, int decoys_, bool isGameLost_)
+	void updateValues(int covers_, int decoys_, bool isGameLost_, bool isGameWon_)
 	{
 		covers = covers_;
 		decoys = decoys_;
 		updateText();
 		
 		isGameLost = isGameLost_;
+		isGameWon = isGameWon_;
 	}
 };
 

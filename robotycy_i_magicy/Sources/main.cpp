@@ -23,6 +23,7 @@ int main()
     Input::addKeyMapping(Action::down,  		sf::Keyboard::Down);
     Input::addKeyMapping(Action::putCover, 		sf::Mouse::Left);
     Input::addKeyMapping(Action::putDecoy,   	sf::Keyboard::Space);
+    Input::addKeyMapping(Action::nextLevel,   	sf::Keyboard::Space);
     Input::addKeyMapping(Action::use,   		sf::Keyboard::E);
     Input::addKeyMapping(Action::restart,   	sf::Keyboard::R);
     
@@ -77,14 +78,23 @@ int main()
         
         if(isWindowFocused)
 		{
-			if(Input::isTapped(Action::restart))
+			if(levelManager.getScene().isGameWon)
 			{
-				levelManager.getScene().restart();
+				if(Input::isTapped(Action::nextLevel))
+				{
+					levelManager.loadNextLevel();
+					Input::updateKeyStates();
+				}
 			}
-			if(Input::isTapped(Action::use))
+			else
 			{
-				levelManager.loadNextLevel();
+				if(Input::isTapped(Action::restart))
+				{
+					levelManager.getScene().restart();
+					Input::updateKeyStates();
+				}
 			}
+			
 			
 			gameView.setCenter(levelManager.getScene().getViewCenter());
 			window.setView(gameView);

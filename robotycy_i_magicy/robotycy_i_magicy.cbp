@@ -62,6 +62,7 @@
 		<Unit filename="Headers/DecoyActor.hpp" />
 		<Unit filename="Headers/HUD.hpp" />
 		<Unit filename="Headers/Input.hpp" />
+		<Unit filename="Headers/Levels.hpp" />
 		<Unit filename="Headers/LineCaster.hpp" />
 		<Unit filename="Headers/MageActor.hpp" />
 		<Unit filename="Headers/Map.hpp" />

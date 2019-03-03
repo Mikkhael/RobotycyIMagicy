@@ -111,7 +111,8 @@ private:
                  },
                  Scene::PlayerData::List{
                      Scene::PlayerData{ {4, 2}, 0, 0 }
-                 }
+                 },
+                 Vector2d{18, 18}
                  
 		);
 		
@@ -165,7 +166,8 @@ private:
                  },
                  Scene::PlayerData::List{
                      Scene::PlayerData{ {15, 18}, 2, 1 }
-                 }
+                 },
+                 Vector2d{5, 3}
                  
 		);
 		

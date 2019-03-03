@@ -14,7 +14,8 @@ enum Action
 	putCover,
 	putDecoy,
 	restart,
-	use
+	use,
+	nextLevel
 };
 
 class Input

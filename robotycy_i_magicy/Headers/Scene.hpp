@@ -213,11 +213,12 @@ public:
     const PlayerData::List playerDatas;
     const BookData::List bookDatas;
     
+    Vector2i winningTile;
+    
     Vector2d getViewCenter()
     {
     	return player->getPosition() + (Input::getMouseView() - player->getPosition()) * 0.3;
     }
-    
     
     bool checkIfEnemyCanSeePoint(EnemyActor& enemy, const Vector2d& point)
     {
@@ -260,9 +261,14 @@ public:
     }
     
     bool isGameLost = false;
+    bool isGameWon = false;
     void update(double deltaTime)
     {
     	if(isGameLost)
+		{
+			
+		}
+		else if(isGameWon)
 		{
 			
 		}
@@ -287,6 +293,13 @@ public:
 			if(isPlayerSeen)
 			{
 				isGameLost = true;
+			}
+			else
+			{
+				if(player->getCoords() == winningTile)
+				{
+					isGameWon = true;
+				}
 			}
 			
 			for(auto& cover : covers)
@@ -402,6 +415,7 @@ public:
     	if(!isSetup)
 		{
 			isGameLost = false;
+			isGameWon = false;
 			performSetupRoutine(robotDatas);
 			performSetupRoutine(playerDatas);
 			performSetupRoutine(bookDatas);
@@ -416,6 +430,8 @@ public:
     {
     	if(isSetup)
 		{
+			isGameLost = false;
+			isGameWon = false;
 			performCleanRoutine(others);
 			performCleanRoutine(enemies);
 			performCleanRoutine(covers);
@@ -437,13 +453,14 @@ public:
     	setup();
     }
     
-    Scene(const Vector2u& mapSize, MapTileData::ListR _mapTileDatas, RobotData::ListR _robotDatas, BookData::ListR _bookDatas, PlayerData::ListR _playerDatas)
+    Scene(const Vector2u& mapSize, MapTileData::ListR _mapTileDatas, RobotData::ListR _robotDatas, BookData::ListR _bookDatas, PlayerData::ListR _playerDatas, const Vector2d& winningTile_)
         : 
             map(*this, mapSize, 32),
             mapTileDatas(_mapTileDatas),
             robotDatas(_robotDatas),
             playerDatas(_playerDatas),
-            bookDatas(_bookDatas)
+            bookDatas(_bookDatas),
+            winningTile(winningTile_)
     {
     }
     
