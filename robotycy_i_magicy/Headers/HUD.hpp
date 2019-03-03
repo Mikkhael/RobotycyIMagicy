@@ -12,6 +12,8 @@ class HUD : public sf::Drawable
 	sf::Sprite decoySprite;
 	sf::Text decoyText;
 	
+	sf::RectangleShape menuSprite;
+	
 	sf::RectangleShape gameLostScreen;
 	sf::RectangleShape gameWonScreen;
 	
@@ -39,31 +41,43 @@ class HUD : public sf::Drawable
 	{
 		sf::View lastView = target.getView();
 		target.setView(hudView);
-		if(isGameLost)
+		
+		if(showMenu)
 		{
-			target.draw(gameLostScreen, states);
-		}
-		else if(isGameWon)
-		{
-			target.draw(gameWonScreen, states);
+			target.draw(menuSprite, states);
 		}
 		else
 		{
-			if(covers > 0)
+			if(isGameLost)
 			{
-				target.draw(coverSprite, states);
-				target.draw(coverText, states);
+				target.draw(gameLostScreen, states);
 			}
-			if(decoys > 0)
+			else if(isGameWon)
 			{
-				target.draw(decoySprite, states);
-				target.draw(decoyText, states);
+				target.draw(gameWonScreen, states);
+			}
+			else
+			{
+				if(covers > 0)
+				{
+					target.draw(coverSprite, states);
+					target.draw(coverText, states);
+				}
+				if(decoys > 0)
+				{
+					target.draw(decoySprite, states);
+					target.draw(decoyText, states);
+				}
 			}
 		}
+		
 		target.setView(lastView);
 	}
 	
 public:
+	
+	bool showMenu = false;
+	
 	HUD()
 		: hudView({0,0,800,600})
 	{
@@ -99,6 +113,9 @@ public:
 		
 		gameWonScreen.setTexture(&TextureManager::get("assets/gameWonScreen.bmp"));
 		gameWonScreen.setSize({800, 600});
+		
+		menuSprite.setTexture(&TextureManager::get("assets/menuScreen.bmp"));
+		menuSprite.setSize({800, 600});
 	}
 	
 	void updateValuesFromScene(Scene& scene)

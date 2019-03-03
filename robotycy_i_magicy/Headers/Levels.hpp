@@ -20,6 +20,21 @@ public:
 		loadLevelsScenes();
 	}
 	
+	void unload()
+	{
+		if(currentScene)
+		{
+			currentScene->unload();
+		}
+		currentScene = nullptr;
+		currentLevelId = -1;
+	}
+	
+	bool isLoaded()
+	{
+		return currentScene != nullptr;
+	}
+	
 	void loadLevel(unsigned int id = 0)
 	{
 		if(currentScene)

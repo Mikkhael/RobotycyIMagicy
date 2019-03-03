@@ -8,7 +8,7 @@
 int main()
 {
     
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Tak");
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Robotycy&Magicy");
     
     bool isWindowFocused = true;
     
@@ -26,6 +26,8 @@ int main()
     Input::addKeyMapping(Action::nextLevel,   	sf::Keyboard::Space);
     Input::addKeyMapping(Action::use,   		sf::Keyboard::E);
     Input::addKeyMapping(Action::restart,   	sf::Keyboard::R);
+    Input::addKeyMapping(Action::escape,  	 	sf::Keyboard::Escape);
+    Input::addKeyMapping(Action::menuStart, 	sf::Keyboard::Space);
     
     LevelManager levelManager;   
     levelManager.loadLevel();
@@ -43,6 +45,8 @@ int main()
     window.setView(gameView);
     
     HUD hud;
+    
+    hud.showMenu = true;
     
     constexpr double frameRefreshLimiter = 0.016;
     double displayCounter = 0;
@@ -78,47 +82,73 @@ int main()
         
         if(isWindowFocused)
 		{
-			if(levelManager.getScene().isGameWon)
+			if(hud.showMenu)
 			{
-				if(Input::isTapped(Action::nextLevel))
+				if(Input::isTapped(Action::escape))
 				{
-					levelManager.loadNextLevel();
-					Input::updateKeyStates();
+					window.close();
+					continue;
+				}
+				
+				if(Input::isTapped(Action::menuStart))
+				{
+					levelManager.loadLevel();
+					hud.showMenu = false;
 				}
 			}
 			else
 			{
-				if(Input::isTapped(Action::restart))
+				
+				if(Input::isTapped(Action::escape))
 				{
-					levelManager.getScene().restart();
-					Input::updateKeyStates();
+					levelManager.unload();
+					hud.showMenu = true;
+					continue;
 				}
-			}
-			
-			
-			gameView.setCenter(levelManager.getScene().getViewCenter());
-			window.setView(gameView);
-			
-			double tempDeltaTime = deltaTime;
-			double subDeltaTime = 0;
-			constexpr double maxSubDeltaTime = 0.016;
-			
-			while(tempDeltaTime > 0)
-			{
-				if(tempDeltaTime >= maxSubDeltaTime)
+				
+				if(levelManager.getScene().isGameWon)
 				{
-					subDeltaTime = maxSubDeltaTime;
-					tempDeltaTime -= maxSubDeltaTime;
+					if(Input::isTapped(Action::nextLevel))
+					{
+						levelManager.loadNextLevel();
+						Input::updateKeyStates();
+					}
 				}
 				else
 				{
-					subDeltaTime = tempDeltaTime;
-					tempDeltaTime = 0;
+					if(Input::isTapped(Action::restart))
+					{
+						levelManager.getScene().restart();
+						Input::updateKeyStates();
+					}
 				}
 				
-				levelManager.getScene().update(subDeltaTime);
 				
+				gameView.setCenter(levelManager.getScene().getViewCenter());
+				window.setView(gameView);
+				
+				double tempDeltaTime = deltaTime;
+				double subDeltaTime = 0;
+				constexpr double maxSubDeltaTime = 0.016;
+				
+				while(tempDeltaTime > 0)
+				{
+					if(tempDeltaTime >= maxSubDeltaTime)
+					{
+						subDeltaTime = maxSubDeltaTime;
+						tempDeltaTime -= maxSubDeltaTime;
+					}
+					else
+					{
+						subDeltaTime = tempDeltaTime;
+						tempDeltaTime = 0;
+					}
+					
+					levelManager.getScene().update(subDeltaTime);
+					
+				}
 			}
+			
 			
 		}
 		
@@ -130,9 +160,16 @@ int main()
 			
 			window.clear(sf::Color::Black);
 			
-			window.draw(levelManager.getScene());
-			hud.updateValuesFromScene(levelManager.getScene());
-			window.draw(hud);
+			if(hud.showMenu)
+			{
+				window.draw(hud);
+			}
+			else
+			{
+				window.draw(levelManager.getScene());
+				hud.updateValuesFromScene(levelManager.getScene());
+				window.draw(hud);
+			}
 			
 			if(deltaTime > frameRefreshLimiter)
 			{

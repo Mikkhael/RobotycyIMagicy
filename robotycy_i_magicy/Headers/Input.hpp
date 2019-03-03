@@ -15,7 +15,9 @@ enum Action
 	putDecoy,
 	restart,
 	use,
-	nextLevel
+	nextLevel,
+	escape,
+	menuStart
 };
 
 class Input
