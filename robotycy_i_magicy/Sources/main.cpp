@@ -58,7 +58,7 @@ int main()
                  	Scene::BookData{{17, 19}, 3, BookActor::Type::Decoy}
                  },
                  Scene::PlayerData::List{
-                     Scene::PlayerData{ {4, 4}, 0, 0 }
+                     Scene::PlayerData{ {4, 2}, 0, 0 }
                  }
                  
                  );
@@ -80,6 +80,9 @@ int main()
     window.setView(gameView);
     
     HUD hud;
+    
+    constexpr double frameRefreshLimiter = 0.016;
+    double displayCounter = 0;
     
     while(window.isOpen())
     {
@@ -106,8 +109,6 @@ int main()
         
         Input::updateKeyStates();
         
-        window.clear(sf::Color::Black);
-        
         /**/
         
         
@@ -122,19 +123,45 @@ int main()
 			gameView.setCenter(scene1.getViewCenter());
 			window.setView(gameView);
 			
-			scene1.update(deltaTime);
+			double tempDeltaTime = deltaTime;
+			double subDeltaTime = 0;
+			constexpr double maxSubDeltaTime = 0.016;
+			
+			while(tempDeltaTime > 0)
+			{
+				if(tempDeltaTime >= maxSubDeltaTime)
+				{
+					subDeltaTime = maxSubDeltaTime;
+					tempDeltaTime -= maxSubDeltaTime;
+				}
+				else
+				{
+					subDeltaTime = tempDeltaTime;
+					tempDeltaTime = 0;
+				}
+				
+				scene1.update(subDeltaTime);
+				
+			}
+			
 		}
+		
+		displayCounter += deltaTime;
         
-        window.draw(scene1);
-        hud.updateValuesFromScene(scene1);
-        window.draw(hud);
-        
-        /**/
-        
-        std::cout << '\r' << (1/deltaTime) << " fps";
-        //std::cin.get();
-        window.display();
-        
+        if(displayCounter >= frameRefreshLimiter)
+		{
+			displayCounter = 0;
+			
+			window.clear(sf::Color::Black);
+			
+			window.draw(scene1);
+			hud.updateValuesFromScene(scene1);
+			window.draw(hud);
+			
+			std::cout << '\r' << (1/deltaTime) << " fps";
+			//std::cin.get();
+			window.display();
+		}
         
     }
     

@@ -27,7 +27,7 @@ protected:
 public:
     
     RobotActor(Map& _map, const Vector2d& _pos = {0,0}, const Vector2d& _size = {32, 32})
-        : EnemyActor(_map, _pos, _size, 16, 320, 35), bodySprite(AnimatedSpritePresets::RobotWalk, AnimationState::Stop)
+        : EnemyActor(_map, _pos, _size, 16, 320, 60), bodySprite(AnimatedSpritePresets::RobotWalk, AnimationState::Stop)
     {
         headSprite.setTexture(TextureManager::get("assets/textures.png"));
         headSprite.setTextureRect({0, 80, 10, 11});

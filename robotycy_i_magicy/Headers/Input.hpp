@@ -102,7 +102,6 @@ public:
 		if(bindedWindow)
 		{
 			Vector2f mousePosition = getMouseWindow(false);
-			std::cout << mousePosition << std::endl;
 			if(mousePosition.x >= 0 && mousePosition.x <= bindedWindow->getSize().x && mousePosition.y >= 0 && mousePosition.y <= bindedWindow->getSize().y)
 			{
 				mousePositionInWindow = mousePosition;
