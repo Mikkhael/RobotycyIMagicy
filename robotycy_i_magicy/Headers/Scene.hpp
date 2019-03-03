@@ -230,7 +230,7 @@ public:
 		{
 			return false;
 		}
-    	if(enemy.canSeeOverMap(player->getPosition(), map))
+    	if(enemy.canSeeOverMap(point, map))
 		{
 			for(auto& cover : covers)
 			{
