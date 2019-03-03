@@ -349,13 +349,18 @@ public:
     
     bool isLoaded = false;
     bool isSetup = false;
+    bool isMapLoaded = false;
     void load()
     {
     	if(!isLoaded)
 		{
-			for(auto& data : mapTileDatas)
+			if(!isMapLoaded)
 			{
-				data.addToScene(*this);
+				for(auto& data : mapTileDatas)
+				{
+					data.addToScene(*this);
+				}
+				isMapLoaded = true;
 			}
 			setup();
 			isLoaded = true;

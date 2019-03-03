@@ -3,6 +3,7 @@
 #include "../Headers/Input.hpp"
 #include "../Headers/Scene.hpp"
 #include "../Headers/HUD.hpp"
+#include "../Headers/Levels.hpp"
 
 int main()
 {
@@ -25,47 +26,8 @@ int main()
     Input::addKeyMapping(Action::use,   		sf::Keyboard::E);
     Input::addKeyMapping(Action::restart,   	sf::Keyboard::R);
     
-    /**/
-    Scene scene1( Vector2d(100, 100),
-                 Scene::MapTileData::List{
-                     Scene::MapTileData{
-                         MapTile::Type::Grass1, MapTile::Type::Metal1, std::vector<sf::IntRect>{sf::IntRect{3, 3, 5, 20}, sf::IntRect{8, 17, 10, 3}}
-                     },
-                     Scene::MapTileData{
-                         MapTile::Type::Path, MapTile::Type::Grass2, std::vector<sf::IntRect>{sf::IntRect{5, 2, 2, 30}}
-                     },
-                     Scene::MapTileData{
-                         MapTile::Type::Metal1, std::vector<sf::IntRect>{sf::IntRect{10, 10, 4, 4}}
-                     },
-                     Scene::MapTileData{
-                         MapTile::Type::Metal2, std::vector<sf::IntRect>{sf::IntRect{12, 12, 1, 1}}
-                     }
-                 },
-                 Scene::RobotData::List{
-                     Scene::RobotData{
-                         false, {3, 3}, {
-                         	{{3, 3}, 1},
-                         	{{4, 6}, 2},
-                         	{{7, 6}, 0},
-                         	}, false
-                     }/*,
-                     Scene::RobotData{
-                         true, {6, 12}, {}, false
-                     }*/
-                 },
-                 Scene::BookData::List{
-                 	Scene::BookData{{17, 17}, 3, BookActor::Type::Cover},
-                 	Scene::BookData{{17, 19}, 3, BookActor::Type::Decoy}
-                 },
-                 Scene::PlayerData::List{
-                     Scene::PlayerData{ {4, 2}, 0, 0 }
-                 }
-                 
-                 );
-    
-    scene1.load();
-    
-    /**/
+    LevelManager levelManager;   
+    levelManager.loadLevel();
     
     sf::Event event;
     sf::Clock clock;
@@ -117,10 +79,14 @@ int main()
 		{
 			if(Input::isTapped(Action::restart))
 			{
-				scene1.restart();
+				levelManager.getScene().restart();
+			}
+			if(Input::isTapped(Action::use))
+			{
+				levelManager.loadNextLevel();
 			}
 			
-			gameView.setCenter(scene1.getViewCenter());
+			gameView.setCenter(levelManager.getScene().getViewCenter());
 			window.setView(gameView);
 			
 			double tempDeltaTime = deltaTime;
@@ -140,7 +106,7 @@ int main()
 					tempDeltaTime = 0;
 				}
 				
-				scene1.update(subDeltaTime);
+				levelManager.getScene().update(subDeltaTime);
 				
 			}
 			
@@ -154,11 +120,19 @@ int main()
 			
 			window.clear(sf::Color::Black);
 			
-			window.draw(scene1);
-			hud.updateValuesFromScene(scene1);
+			window.draw(levelManager.getScene());
+			hud.updateValuesFromScene(levelManager.getScene());
 			window.draw(hud);
 			
-			std::cout << '\r' << (1/deltaTime) << " fps";
+			if(deltaTime > frameRefreshLimiter)
+			{
+				std::cout << '\r' << (1/deltaTime) << " fps                ";
+			}
+			else
+			{
+				std::cout << '\r' << (1/frameRefreshLimiter) << " (" << (1/deltaTime) << ") fps          ";
+			}
+			
 			//std::cin.get();
 			window.display();
 		}

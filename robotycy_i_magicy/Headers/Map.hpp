@@ -144,10 +144,19 @@ public:
         return *scene;
     }
     
-    Map(Scene& _scene, const Vector2u& _size, int _tileSize = 32)
-        : scene(&_scene), size(_size), tileSize(_tileSize)
+    void destroy()
     {
-        grid.reserve(size.y);
+    	grid.clear();
+    }
+    
+    void rebuild()
+    {
+    	if(grid.size() > 0)
+		{
+			destroy();
+		}
+		
+		grid.reserve(size.y);
         for(unsigned int i=0u; i<size.y; i++)
         {
             grid.push_back({});
@@ -157,6 +166,12 @@ public:
                 grid[i].emplace_back(tileSize, Vector2d(j, i));
             }
         }
+    }
+    
+    Map(Scene& _scene, const Vector2u& _size, int _tileSize = 32)
+        : scene(&_scene), size(_size), tileSize(_tileSize)
+    {
+    	rebuild();
     }
     
 };

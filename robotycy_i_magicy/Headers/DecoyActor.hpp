@@ -35,7 +35,6 @@ public:
 		sprite.updateFrame(deltaTime);
 	}
 	
-	
 };
 
 #endif // DECOYACTOR_HPP_INCLUDED
