@@ -11,15 +11,26 @@ class CoverActor : public Actor
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         states.transform = states.transform.combine(getTransform());
-        if(isActive)
-		{
-			target.draw(sprite, states);
-		}
+		target.draw(sprite, states);
     }
+    
+	bool active = true;
 	
 public:
 	
-	bool isActive = true;
+	
+	bool isActive() const
+	{
+		return active;
+	}
+	
+	void setInactive()
+	{
+		active = false;
+		sprite.noResetWheOnceCompleted = true;
+		sprite.setPreset(AnimatedSpritePresets::CoverFade);
+		sprite.reset(AnimationState::Once);
+	}
 	
 	CoverActor(Map& _map, const Vector2d& _pos = {0,0}, const Vector2d& _size = {32, 32})
 		: Actor(_map, _pos, _size), sprite(AnimatedSpritePresets::CoverBlink)

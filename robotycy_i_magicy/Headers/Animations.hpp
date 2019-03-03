@@ -39,6 +39,7 @@ namespace AnimatedSpritePresets
 	const AnimatedSpritePreset	MageWalk		= AnimatedSpritePreset("assets/textures.png", sf::IntRect(16, 45, 7, 21), 	0.5, 		4);
 	const AnimatedSpritePreset	RobotWalk		= AnimatedSpritePreset("assets/textures.png", sf::IntRect(16, 80, 16, 15), 	0.2, 		2);
 	const AnimatedSpritePreset	CoverBlink		= AnimatedSpritePreset("assets/textures.png", sf::IntRect(0, 160, 16, 16), 	0.4, 		4);
+	const AnimatedSpritePreset	CoverFade		= AnimatedSpritePreset("assets/textures.png", sf::IntRect(0, 208, 16, 16), 	0.4, 		5);
 	const AnimatedSpritePreset	DecoyBlink		= AnimatedSpritePreset("assets/textures.png", sf::IntRect(0, 176, 14, 10), 	0.5, 		2);
 }
 
@@ -71,6 +72,8 @@ public:
 	
 	bool flipX = false;
 	bool flipY = false;
+	
+	bool noResetWheOnceCompleted = false;
 	
 	AnimationState state;
 	
@@ -112,7 +115,13 @@ public:
 			frame = 0;
 			
 			if(state == Once)
+			{
 				state = Stop;
+				if(noResetWheOnceCompleted)
+				{
+					frame = preset.framesCount - 1;
+				}
+			}
 		}
 		updateTextureRect();
 	}

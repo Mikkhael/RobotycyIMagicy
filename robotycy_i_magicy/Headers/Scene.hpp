@@ -17,13 +17,12 @@ class Scene : public sf::Drawable
         performDrawRoutine(target, states, books);
         performDrawRoutine(target, states, decoys);
         performDrawRoutine(target, states, enemies);
+        target.draw(*player, states);
         performDrawRoutine(target, states, covers);
-        
         for(auto& actor : enemies)
         {
 			actor->drawViewField(target, states);
         }
-        target.draw(*player, states);
         
         //std::cout << "DREW " << std::endl;
     }
@@ -234,7 +233,7 @@ public:
 		{
 			for(auto& cover : covers)
 			{
-				if(!enemy.canSeeOverRect(point, cover->getRect()))
+				if(cover->isActive() && !enemy.canSeeOverRect(point, cover->getRect()))
 				{
 					return false;
 				}
@@ -290,6 +289,27 @@ public:
 				isGameLost = true;
 			}
 			
+			for(auto& cover : covers)
+			{
+				if(cover->isActive())
+				{
+					if(Collision::checkIfRectsOverlap(player->getRect(), cover->getRect()))
+					{
+						cover->setInactive();
+					}
+					else
+					{
+						for(auto& enemy : enemies)
+						{
+							if(Collision::checkIfRectsOverlap(enemy->getRect(), cover->getRect()))
+							{
+								cover->setInactive();
+								break;
+							}
+						}
+					}
+				}
+			}
 			for(auto& enemy : enemies)
 			{
 				if(enemy->isActorDistracted())
