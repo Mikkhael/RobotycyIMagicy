@@ -133,7 +133,7 @@ public:
                 else if(path.size() > 1)
 				{
 					std::vector<std::pair<Vector2d, double> > goodPath;
-					for(int i=0; i<path.size(); i++)
+					for(unsigned int i=0; i<path.size(); i++)
 					{
 						goodPath.push_back(std::make_pair(scene.map.getTileCenterPosition(path[i].first), path[i].second));
 					}
@@ -250,7 +250,7 @@ public:
     
     DecoyActor* checkIfEnemySeesDecoy(EnemyActor& enemy)
     {
-    	for(int i=0; i<decoys.size(); i++)
+    	for(unsigned int i=0; i<decoys.size(); i++)
 		{
 			if(decoys[i]->isActive && checkIfEnemyCanSeePoint(enemy, decoys[i]->getPosition()))
 			{
@@ -321,7 +321,7 @@ public:
 				Vector2d position = map.getTileCenterPosition(coords);
 				//std::cout << position << "  " << (player->coversToPlace) << "   " << covers.size() << "   " << map.isTileWalkable(coords) << std::endl;
 				bool canPlace = map.isTileWalkable(coords);
-				for(int i=0; i<covers.size() && canPlace; i++)
+				for(unsigned int i=0; i<covers.size() && canPlace; i++)
 				{
 					if(covers[i]->getPosition() == position)
 					{

@@ -22,25 +22,6 @@ int main()
     Input::addKeyMapping(Action::putDecoy,   	sf::Keyboard::Space);
     Input::addKeyMapping(Action::use,   		sf::Keyboard::E);
     Input::addKeyMapping(Action::restart,   	sf::Keyboard::R);
-    /*
-    Map map({100, 100}, 32);
-    map.setTileRectsWithBorder(MapTile::Type::Grass1, MapTile::Type::Metal1, {{3, 3, 5, 20}, {8, 17, 10, 3}});
-    map.setTileRectsWithBorder(MapTile::Type::Path, MapTile::Type::Grass2, {{5, 2, 2, 30}});
-    
-    map.setTileRect(MapTile::Type::Metal1, {10, 10, 4, 4});
-    map.setTile(12, 12, MapTile::Type::Metal2);
-    
-    
-    PlayerMageActor player(map, {100, 100}, {28, 28});
-    MageActor x(map, {100, 150});
-    x.goToDestination({300, 300});
-    
-    RobotActor r1(map, {200, 200}, {32, 32});
-    r1.goToDestination({250, 550});
-    
-    RobotCircleActor r2(map, {200, 400});
-    
-    /**/
     
     /**/
     Scene scene1( Vector2d(100, 100),
@@ -116,42 +97,6 @@ int main()
         Input::updateKeyStates();
         
         window.clear(sf::Color::Black);
-        /*
-        constexpr float speed = 3000;
-        if(Input::isPressed(Action::use))
-        {
-            if(Input::isPressed(Action::down))
-            {
-                map.move({0, -speed * deltaTime});
-            }
-            if(Input::isPressed(Action::up))
-            {
-                map.move({0, speed * deltaTime});
-            }
-            if(Input::isPressed(Action::left))
-            {
-                map.move({speed * deltaTime, 0});
-            }
-            if(Input::isPressed(Action::right))
-            {
-                map.move({-speed * deltaTime, 0});
-            }
-        }
-        
-        r1.update(deltaTime);
-        r2.update(deltaTime);
-        player.update(deltaTime);
-        x.update(deltaTime);
-        
-        
-        window.draw(map);
-        
-        window.draw(r1);
-        window.draw(r2);
-        
-        window.draw(x);
-        window.draw(player);
-        /**/
         
         /**/
         

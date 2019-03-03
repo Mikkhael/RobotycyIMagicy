@@ -64,11 +64,14 @@ public:
         
         Collision::LineIntersection tempLineIntersection;
         
+        unsigned int endY = std::min(map.getSize().y, static_cast<unsigned int>(std::max(testBoxEnd.y, 0)));
+        unsigned int endX = std::min(map.getSize().x, static_cast<unsigned int>(std::max(testBoxEnd.x, 0)));
+        
         bool hit = true;
         
-        for(int i=std::max(testBoxStart.y, 0); i < testBoxEnd.y; i++)
+        for(unsigned int i=std::max(testBoxStart.y, 0); i < endY; i++)
         {
-            for (int j=std::max(testBoxStart.x, 0); j < testBoxEnd.x ; j++)
+            for (unsigned int j=std::max(testBoxStart.x, 0); j < endX ; j++)
             {
                 if(!map.isTileOpaque({j, i}))
                 {
