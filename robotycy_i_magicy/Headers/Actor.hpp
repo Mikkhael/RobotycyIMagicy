@@ -236,7 +236,7 @@ public:
     
     bool isActorWalking() const
     {
-        return isWalking;
+        return isWalking && (sleepCounter <= 0);
     }
     bool isActorDistracted()
     {
