@@ -9,30 +9,16 @@
 #include "BookActor.hpp"
 
 class Scene : public sf::Drawable
-{
+{	
     void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         target.draw(map, states);
-        for(auto& actor : others)
-        {
-            target.draw(*actor, states);
-        }
-        for(auto& actor : books)
-        {
-            target.draw(*actor, states);
-        }
-        for(auto& actor : decoys)
-        {
-            target.draw(*actor, states);
-        }
-        for(auto& actor : enemies)
-        {
-            target.draw(*actor, states);
-        }
-        for(auto& actor : covers)
-        {
-            target.draw(*actor, states);
-        }
+        performDrawRoutine(target, states, others);
+        performDrawRoutine(target, states, books);
+        performDrawRoutine(target, states, decoys);
+        performDrawRoutine(target, states, enemies);
+        performDrawRoutine(target, states, covers);
+        
         for(auto& actor : enemies)
         {
 			actor->drawViewField(target, states);
@@ -41,6 +27,44 @@ class Scene : public sf::Drawable
         
         //std::cout << "DREW " << std::endl;
     }
+    
+    template<typename T>
+    void performCleanRoutine(T& list)
+    {
+    	for(auto it = list.begin(); it != list.end(); it++)
+        {
+            delete *it;
+        }
+        list.clear();
+    }
+    
+    template<typename T>
+    void performSetupRoutine(T& datas)
+    {
+    	for(auto& data : datas)
+        {
+            data.addToScene(*this);
+        }
+    }
+    
+    template<typename T>
+    void performUpdateRoutine(double deltaTime, T& actors)
+    {
+		for(auto& actor : actors)
+		{
+			actor->update(deltaTime);
+		}
+    }
+    
+    template<typename T>
+    void performDrawRoutine(sf::RenderTarget& target, sf::RenderStates states, T& actors) const
+    {
+		for(auto& actor : actors)
+        {
+            target.draw(*actor, states);
+        }
+    }
+    
 public:
     
     class MapTileData
@@ -236,152 +260,156 @@ public:
 		return nullptr;
     }
     
+    bool isGameLost = false;
     void update(double deltaTime)
     {
-    	bool isPlayerSeen = false;
-        for(auto& actor : others)
-        {
-            actor->update(deltaTime);
-        }
-        for(auto& actor : books)
-        {
-            actor->update(deltaTime);
-        }
-        for(auto& actor : covers)
-        {
-            actor->update(deltaTime);
-        }
-        for(auto& actor : decoys)
-        {
-            actor->update(deltaTime);
-        }
-        for(auto& actor : enemies)
-        {
-            actor->update(deltaTime);
-        }
-        player->update(deltaTime);
-        
-        
-        for(auto& actor : enemies)
-        {
-            if(!isPlayerSeen && checkIfEnemyCanSeePlayer(*actor))
-			{
-				isPlayerSeen = true;
-				break;
-			}
-        }
-        if(isPlayerSeen)
+    	if(isGameLost)
 		{
-			//std::cout << "Seen" << std::endl;
+			
 		}
-		
-        for(auto& enemy : enemies)
-        {
-        	if(enemy->isActorDistracted())
-			{
-				continue;
-			}
-            DecoyActor* decoy = checkIfEnemySeesDecoy(*enemy);
-            if(decoy)
-			{
-				decoy->setInactive();
-				enemy->goToDistraction(decoy->getPosition());
-			}
-        }
-        for(auto& book : books)
-        {
-        	if(book->isTaken())
-			{
-				continue;
-			}
-            if(map.positionToCoords(book->getPosition()) == map.positionToCoords(player->getPosition()))
-			{
-				book->pickUp(*player);
-			}
-        }
-		
-        if(Input::isTapped(Action::putCover) && player->coversToPlace > 0)
+		else
 		{
-			Vector2i coords = map.positionToCoords(Input::getMouseView());
-			Vector2d position = map.getTileCenterPosition(coords);
-			//std::cout << position << "  " << (player->coversToPlace) << "   " << covers.size() << "   " << map.isTileWalkable(coords) << std::endl;
-			bool canPlace = map.isTileWalkable(coords);
-			for(int i=0; i<covers.size() && canPlace; i++)
+			bool isPlayerSeen = false;
+			performUpdateRoutine(deltaTime, others);
+			performUpdateRoutine(deltaTime, books);
+			performUpdateRoutine(deltaTime, covers);
+			performUpdateRoutine(deltaTime, decoys);
+			performUpdateRoutine(deltaTime, enemies);
+			player->update(deltaTime);
+			
+			for(auto& actor : enemies)
 			{
-				if(covers[i]->getPosition() == position)
+				if(!isPlayerSeen && checkIfEnemyCanSeePlayer(*actor))
 				{
-					canPlace = false;
+					isPlayerSeen = true;
+					break;
 				}
 			}
-			if(canPlace)
+			if(isPlayerSeen)
 			{
-				player->coversToPlace--;
-				covers.push_back(new CoverActor(map, position));
+				isGameLost = true;
+			}
+			
+			for(auto& enemy : enemies)
+			{
+				if(enemy->isActorDistracted())
+				{
+					continue;
+				}
+				DecoyActor* decoy = checkIfEnemySeesDecoy(*enemy);
+				if(decoy)
+				{
+					decoy->setInactive();
+					enemy->goToDistraction(decoy->getPosition());
+				}
+			}
+			for(auto& book : books)
+			{
+				if(book->isTaken())
+				{
+					continue;
+				}
+				if(map.positionToCoords(book->getPosition()) == map.positionToCoords(player->getPosition()))
+				{
+					book->pickUp(*player);
+				}
+			}
+			
+			if(Input::isTapped(Action::putCover) && player->coversToPlace > 0)
+			{
+				Vector2i coords = map.positionToCoords(Input::getMouseView());
+				Vector2d position = map.getTileCenterPosition(coords);
+				//std::cout << position << "  " << (player->coversToPlace) << "   " << covers.size() << "   " << map.isTileWalkable(coords) << std::endl;
+				bool canPlace = map.isTileWalkable(coords);
+				for(int i=0; i<covers.size() && canPlace; i++)
+				{
+					if(covers[i]->getPosition() == position)
+					{
+						canPlace = false;
+					}
+				}
+				if(canPlace)
+				{
+					player->coversToPlace--;
+					covers.push_back(new CoverActor(map, position));
+				}
+			}
+			
+			if(Input::isTapped(Action::putDecoy) && player->decoysToPlace > 0)
+			{
+				player->decoysToPlace--;
+				decoys.push_back(new DecoyActor(map, player->getPosition()));
 			}
 		}
 		
-		if(Input::isTapped(Action::putDecoy) && player->decoysToPlace > 0)
-		{
-			player->decoysToPlace--;
-			decoys.push_back(new DecoyActor(map, player->getPosition()));
-		}
+    	
 		
         //std::cout << "UPDATED " << std::endl;
     }
     
+    bool isLoaded = false;
+    bool isSetup = false;
     void load()
     {
-        setup();
+    	if(!isLoaded)
+		{
+			for(auto& data : mapTileDatas)
+			{
+				data.addToScene(*this);
+			}
+			setup();
+			isLoaded = true;
+		}
         //std::cout << "LOADED" << std::endl;
+    }
+    
+    void unload()
+    {
+    	if(isLoaded)
+		{
+			clean();
+			isLoaded = false;
+		}
     }
     
     void setup()
     {
-    	for(auto& data : mapTileDatas)
-        {
-            data.addToScene(*this);
-        }
-        for(auto& data : robotDatas)
-        {
-            data.addToScene(*this);
-        }
-        for(auto& data : playerDatas)
-        {
-            data.addToScene(*this);
-        }
-        for(auto& data : bookDatas)
-        {
-            data.addToScene(*this);
-        }
+    	if(!isSetup)
+		{
+			isGameLost = false;
+			performSetupRoutine(robotDatas);
+			performSetupRoutine(playerDatas);
+			performSetupRoutine(bookDatas);
+			isSetup = true;
+		}
+		//std::cout << "SET UP" << std::endl;
     }
+    
+    
     
     void clean()
     {
-    	for(auto it = others.begin(); it != others.end(); it++)
-        {
-            delete *it;
-        }
-        for(auto it = enemies.begin(); it != enemies.end(); it++)
-        {
-            delete *it;
-        }
-        for(auto it = covers.begin(); it != covers.end(); it++)
-        {
-            delete *it;
-        }
-        for(auto it = decoys.begin(); it != decoys.end(); it++)
-        {
-            delete *it;
-        }
-        for(auto it = books.begin(); it != books.end(); it++)
-        {
-            delete *it;
-        }
-        if(player)
+    	if(isSetup)
 		{
-			delete player;
-			player = nullptr;
+			performCleanRoutine(others);
+			performCleanRoutine(enemies);
+			performCleanRoutine(covers);
+			performCleanRoutine(decoys);
+			performCleanRoutine(books);
+			if(player)
+			{
+				delete player;
+				player = nullptr;
+			}
+			isSetup = false;
 		}
+		//std::cout << "CLEANED" << std::endl;
+    }
+    
+    void restart()
+    {
+    	clean();
+    	setup();
     }
     
     Scene(const Vector2u& mapSize, MapTileData::ListR _mapTileDatas, RobotData::ListR _robotDatas, BookData::ListR _bookDatas, PlayerData::ListR _playerDatas)
@@ -396,7 +424,7 @@ public:
     
     ~Scene()
     {
-        clean();
+        unload();
     }    
 };
 

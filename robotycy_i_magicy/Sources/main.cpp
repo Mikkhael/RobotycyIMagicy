@@ -21,6 +21,7 @@ int main()
     Input::addKeyMapping(Action::putCover, 		sf::Mouse::Left);
     Input::addKeyMapping(Action::putDecoy,   	sf::Keyboard::Space);
     Input::addKeyMapping(Action::use,   		sf::Keyboard::E);
+    Input::addKeyMapping(Action::restart,   	sf::Keyboard::R);
     /*
     Map map({100, 100}, 32);
     map.setTileRectsWithBorder(MapTile::Type::Grass1, MapTile::Type::Metal1, {{3, 3, 5, 20}, {8, 17, 10, 3}});
@@ -153,6 +154,14 @@ int main()
         /**/
         
         /**/
+        
+        
+        if(Input::isTapped(Action::restart))
+		{
+			scene1.restart();
+		}
+        
+        
         gameView.setCenter(scene1.getViewCenter());
 		window.setView(gameView);
 		

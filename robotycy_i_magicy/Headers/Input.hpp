@@ -13,6 +13,7 @@ enum Action
 	down,
 	putCover,
 	putDecoy,
+	restart,
 	use
 };
 

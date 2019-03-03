@@ -12,29 +12,16 @@ class HUD : public sf::Drawable
 	sf::Sprite decoySprite;
 	sf::Text decoyText;
 	
+	sf::RectangleShape gameLostScreen;
+	
 	sf::Font font;
     
     sf::View hudView;
 	
-	void draw(sf::RenderTarget& target, sf::RenderStates states) const
-	{
-		sf::View lastView = target.getView();
-		target.setView(hudView);
-		if(covers > 0)
-		{
-			target.draw(coverSprite, states);
-			target.draw(coverText, states);
-		}
-		if(decoys > 0)
-		{
-			target.draw(decoySprite, states);
-			target.draw(decoyText, states);
-		}
-		target.setView(lastView);
-	}
 	
 	int covers = 0;
 	int decoys = 0;
+	bool isGameLost = false;
 	
 	void updateText()
 	{
@@ -46,6 +33,29 @@ class HUD : public sf::Drawable
 		decoyText.setString(ss.str());
 	}
 	
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const
+	{
+		sf::View lastView = target.getView();
+		target.setView(hudView);
+		if(isGameLost)
+		{
+			target.draw(gameLostScreen, states);
+		}
+		else
+		{
+			if(covers > 0)
+			{
+				target.draw(coverSprite, states);
+				target.draw(coverText, states);
+			}
+			if(decoys > 0)
+			{
+				target.draw(decoySprite, states);
+				target.draw(decoyText, states);
+			}
+		}
+		target.setView(lastView);
+	}
 	
 public:
 	HUD()
@@ -77,21 +87,26 @@ public:
 		decoyText.setString("x0");
 		decoyText.setPosition(60, 550);
 		decoyText.setFillColor(sf::Color::White);
+		
+		gameLostScreen.setTexture(&TextureManager::get("assets/gameLostScreen.bmp"));
+		gameLostScreen.setSize({800, 600});
 	}
 	
 	void updateValuesFromScene(Scene& scene)
 	{
 		if(scene.player)
 		{
-			updateValues(scene.player->coversToPlace, scene.player->decoysToPlace);
+			updateValues(scene.player->coversToPlace, scene.player->decoysToPlace, scene.isGameLost);
 		}
 	}
 	
-	void updateValues(int covers_, int decoys_)
+	void updateValues(int covers_, int decoys_, bool isGameLost_)
 	{
 		covers = covers_;
 		decoys = decoys_;
 		updateText();
+		
+		isGameLost = isGameLost_;
 	}
 };
 
