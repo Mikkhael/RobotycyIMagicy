@@ -60,7 +60,7 @@ public:
 	{
 		if(list.count(name) <= 0)
 		{
-			std::cout << "NOT FOUND SPLASH" << std::endl;
+			std::cout << "NOT FOUND SPLASH " << name << std::endl;
 			return nullptr;
 		}
 		return &list.at(name);
@@ -75,6 +75,9 @@ public:
 		
 		addSequence({"story", "story2"});
 		addSequence({"controlsBasics", "controlsBasics2"});
+		addSequence({"coverBook"});
+		addSequence({"decoyBook"});
+		addSequence({"gameWon"});
 		
 	}
 };

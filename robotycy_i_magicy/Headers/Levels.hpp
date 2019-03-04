@@ -12,7 +12,7 @@ class LevelManager
 	
 public:
 	
-	const int levelsCount = 2;
+	const int levelsCount = 3;
 	
 	LevelManager()
 	{
@@ -35,6 +35,12 @@ public:
 		return currentScene != nullptr;
 	}
 	
+	bool levelsCompleted = false;
+	bool areLevelsCompleted()
+	{
+		return levelsCompleted;
+	}
+	
 	void loadLevel(unsigned int id = 0)
 	{
 		if(currentScene)
@@ -51,7 +57,9 @@ public:
 		currentLevelId++;
 		if(currentLevelId >= levelsCount)
 		{
-			currentLevelId = 0;
+			levelsCompleted = true;
+			unload();
+			return;
 		}
 		loadLevel(currentLevelId);
 	}
@@ -60,6 +68,7 @@ public:
 	{
 		if(!currentScene)
 		{
+			std::cout << "CRITICAL ERROR, LEVEL NOT LOADED" << std::endl;
 			throw 123;
 		}
 		return *currentScene;
@@ -184,7 +193,64 @@ private:
                  Scene::PlayerData::List{
                      Scene::PlayerData{ {15, 18}, 2, 1 }
                  },
-                 Vector2d{5, 3}
+                 Vector2d{5, 3},
+                 "decoyBook"
+                 
+		);
+		
+		scenes.emplace_back( // LEVEL 3
+		
+			 Vector2d(100, 100),
+                 Scene::MapTileData::List{
+                     Scene::MapTileData{
+                         MapTile::Type::Path,
+                         MapTile::Type::Metal1,
+                         std::vector<sf::IntRect>{
+                         	sf::IntRect{3, 3, 5, 20},
+                         	sf::IntRect{8, 17, 10, 3}
+						 }
+                     },
+                     Scene::MapTileData{
+                         MapTile::Type::Metal2,
+                         MapTile::Type::Metal1,
+                         std::vector<sf::IntRect>{
+                         	sf::IntRect{5, 2, 2, 30}
+						 }
+                     },
+                     Scene::MapTileData{
+                         MapTile::Type::Metal1,
+                         std::vector<sf::IntRect>{
+                         	sf::IntRect{10, 10, 4, 4}
+						 }
+                     },
+                     Scene::MapTileData{
+                         MapTile::Type::Metal2,
+                         std::vector<sf::IntRect>{
+                         	sf::IntRect{12, 12, 1, 1}
+						 }
+                     }
+                 },
+                 Scene::RobotData::List{
+                     Scene::RobotData{
+                         false, {4, 3}, {
+                         	{{4, 3}, 1},
+                         	{{4, 18}, 1},
+                         	{{10, 18}, 1},
+                         	}, true
+                     },
+                     Scene::RobotData{
+                         true, {6, 12}, {}, false
+                     }
+                 },
+                 Scene::BookData::List{
+                 	Scene::BookData{{17, 17}, 300, BookActor::Type::Decoy},
+                 	Scene::BookData{{17, 19}, 300, BookActor::Type::Cover}
+                 },
+                 Scene::PlayerData::List{
+                     Scene::PlayerData{ {15, 18}, 2, 1 }
+                 },
+                 Vector2d{5, 30},
+                 "coverBook"
                  
 		);
 		

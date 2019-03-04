@@ -90,12 +90,14 @@ int main()
 					levelManager.unload();
 					hud.showMenu = true;
 					hud.clearSplashScrean();
+					Input::updateKeyStates();
 					continue;
 				}
 				
 				if(Input::isTapped(Action::nextLevel))
 				{
 					hud.nextSplashScreen();
+					Input::updateKeyStates();
 				}
 			}
 			else if(hud.showMenu)
@@ -108,8 +110,9 @@ int main()
 				
 				if(Input::isTapped(Action::menuStart))
 				{
-					levelManager.loadLevel();
-					hud.setSplashScreen("story");
+					levelManager.loadLevel(1);
+					Input::updateKeyStates();
+					//hud.setSplashScreen("story");
 					hud.showMenu = false;
 				}
 			}
@@ -130,6 +133,13 @@ int main()
 					{
 						levelManager.loadNextLevel();
 						Input::updateKeyStates();
+						if(levelManager.areLevelsCompleted())
+						{
+							levelManager.unload();
+							hud.showMenu = true;
+							hud.setSplashScreen("gameWon");
+							continue;
+						}
 					}
 				}
 				else
