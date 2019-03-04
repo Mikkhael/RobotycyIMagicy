@@ -9,7 +9,7 @@
 int main()
 {
     
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Robotycy&Magicy");
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Robotycy&Magicy", sf::Style::Titlebar | sf::Style::Close);
     
     bool isWindowFocused = true;
     
@@ -51,6 +51,8 @@ int main()
     
     constexpr double frameRefreshLimiter = 0.016;
     double displayCounter = 0;
+    
+    constexpr int firstLevel = 0;
     
     while(window.isOpen())
     {
@@ -110,9 +112,12 @@ int main()
 				
 				if(Input::isTapped(Action::menuStart))
 				{
-					levelManager.loadLevel(1);
+					levelManager.loadLevel(firstLevel);
 					Input::updateKeyStates();
-					//hud.setSplashScreen("story");
+					if(firstLevel == 0)
+					{
+						hud.setSplashScreen("story");
+					}
 					hud.showMenu = false;
 				}
 			}
@@ -202,6 +207,7 @@ int main()
 				window.draw(hud);
 			}
 			
+			#ifdef ShowFPS
 			if(deltaTime > frameRefreshLimiter)
 			{
 				std::cout << '\r' << (1/deltaTime) << " fps                ";
@@ -210,6 +216,7 @@ int main()
 			{
 				std::cout << '\r' << (1/frameRefreshLimiter) << " (" << (1/deltaTime) << ") fps          ";
 			}
+			#endif // ShowFPS
 			
 			//std::cin.get();
 			window.display();
