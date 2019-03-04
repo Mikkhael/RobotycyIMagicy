@@ -21,7 +21,7 @@ class BookActor : public Actor
 	
 public:
 	
-	enum class Type{Decoy, Cover} type;
+	enum class Type{Decoy, Cover, Empty} type;
 	int charge = 0;
 	
 	bool isTaken() const
@@ -44,6 +44,10 @@ public:
 				player.coversToPlace += charge;
 				break;
 			}
+		default:
+			{
+				break;
+			}
 		}
 	}
 	
@@ -63,9 +67,16 @@ public:
 				sprite.setTextureRect({64, 48, 12, 16});
 				break;
 			}
+		case Type::Empty:
+			{
+				sprite.setTextureRect({80, 48, 12, 16});
+				break;
+			}
 		}
 		setValidScaleAndOrigin(sprite, {12, 16});
 	}
+	
+	~BookActor(){}
 };
 
 #endif // BOOKACTOR_HPP_INCLUDED

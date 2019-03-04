@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "../Headers/Input.hpp"
+#include "../Headers/SplashScreen.hpp"
 #include "../Headers/Scene.hpp"
 #include "../Headers/HUD.hpp"
 #include "../Headers/Levels.hpp"
@@ -29,8 +30,8 @@ int main()
     Input::addKeyMapping(Action::escape,  	 	sf::Keyboard::Escape);
     Input::addKeyMapping(Action::menuStart, 	sf::Keyboard::Space);
     
-    LevelManager levelManager;   
-    levelManager.loadLevel();
+    LevelManager levelManager;
+    SplashScreen::load();
     
     sf::Event event;
     sf::Clock clock;
@@ -81,8 +82,23 @@ int main()
         
         
         if(isWindowFocused)
-		{
-			if(hud.showMenu)
+		{			
+			if(hud.isSplashScreen())
+			{
+				if(Input::isTapped(Action::escape))
+				{
+					levelManager.unload();
+					hud.showMenu = true;
+					hud.clearSplashScrean();
+					continue;
+				}
+				
+				if(Input::isTapped(Action::nextLevel))
+				{
+					hud.nextSplashScreen();
+				}
+			}
+			else if(hud.showMenu)
 			{
 				if(Input::isTapped(Action::escape))
 				{
@@ -93,11 +109,13 @@ int main()
 				if(Input::isTapped(Action::menuStart))
 				{
 					levelManager.loadLevel();
+					hud.setSplashScreen("story");
 					hud.showMenu = false;
 				}
 			}
-			else
+			else if(levelManager.isLoaded())
 			{
+				hud.updateValuesFromScene(levelManager.getScene());
 				
 				if(Input::isTapped(Action::escape))
 				{
@@ -160,6 +178,10 @@ int main()
 			
 			window.clear(sf::Color::Black);
 			
+			if(hud.isSplashScreen())
+			{
+				window.draw(hud);
+			}
 			if(hud.showMenu)
 			{
 				window.draw(hud);
@@ -167,7 +189,6 @@ int main()
 			else
 			{
 				window.draw(levelManager.getScene());
-				hud.updateValuesFromScene(levelManager.getScene());
 				window.draw(hud);
 			}
 			

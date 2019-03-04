@@ -43,7 +43,7 @@ public:
 		sprite.updateFrame(deltaTime);
 	}
 	
-	
+	~CoverActor(){};
 };
 
 #endif // COVER_HPP_INCLUDED

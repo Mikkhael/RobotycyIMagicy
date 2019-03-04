@@ -122,12 +122,14 @@ private:
                  },
                  Scene::BookData::List{
                  	Scene::BookData{{17, 17}, 3, BookActor::Type::Cover},
-                 	Scene::BookData{{17, 19}, 3, BookActor::Type::Decoy}
+                 	Scene::BookData{{17, 19}, 3, BookActor::Type::Decoy},
+                 	Scene::BookData{{5, 29}}
                  },
                  Scene::PlayerData::List{
                      Scene::PlayerData{ {4, 2}, 0, 0 }
                  },
-                 Vector2d{18, 18}
+                 Vector2d{18, 18},
+                 "controlsBasics"
                  
 		);
 		

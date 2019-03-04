@@ -35,6 +35,7 @@ public:
 		sprite.updateFrame(deltaTime);
 	}
 	
+	~DecoyActor(){};
 };
 
 #endif // DECOYACTOR_HPP_INCLUDED

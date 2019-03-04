@@ -7,6 +7,7 @@
 #include "Cover.hpp"
 #include "DecoyActor.hpp"
 #include "BookActor.hpp"
+#include "NextLevelActor.hpp"
 
 class Scene : public sf::Drawable
 {	
@@ -19,6 +20,7 @@ class Scene : public sf::Drawable
         performDrawRoutine(target, states, enemies);
         target.draw(*player, states);
         performDrawRoutine(target, states, covers);
+        target.draw(nextLevelActor, states);
         for(auto& actor : enemies)
         {
 			actor->drawViewField(target, states);
@@ -189,7 +191,7 @@ public:
         using ListR = const std::vector<BookData>&;
         using List = std::vector<BookData>;
         
-		BookData(const Vector2u& _position, int _charge, BookActor::Type _type)
+		BookData(const Vector2u& _position, int _charge = 0, BookActor::Type _type = BookActor::Type::Empty)
             : position(_position), charge(_charge), type(_type)
         {}
         
@@ -214,6 +216,8 @@ public:
     const BookData::List bookDatas;
     
     Vector2i winningTile;
+    NextLevelActor nextLevelActor;
+    const std::string splash = "";
     
     Vector2d getViewCenter()
     {
@@ -296,7 +300,7 @@ public:
 			}
 			else
 			{
-				if(player->getCoords() == winningTile)
+				if(booksToTake <= 0 && player->getCoords() == winningTile)
 				{
 					isGameWon = true;
 				}
@@ -345,6 +349,7 @@ public:
 				if(map.positionToCoords(book->getPosition()) == map.positionToCoords(player->getPosition()))
 				{
 					book->pickUp(*player);
+					setBooksToTake(booksToTake-1);
 				}
 			}
 			
@@ -387,6 +392,7 @@ public:
     {
     	if(!isLoaded)
 		{
+			splashToShow = splash;
 			if(!isMapLoaded)
 			{
 				for(auto& data : mapTileDatas)
@@ -410,6 +416,19 @@ public:
 		}
     }
     
+    int booksToTake = 0;
+    void setBooksToTake(int n)
+    {
+    	booksToTake = n;
+    	if(booksToTake > 0)
+		{
+			nextLevelActor.setInactive();
+		}
+		else
+		{
+			nextLevelActor.setActive();
+		}
+    }
     void setup()
     {
     	if(!isSetup)
@@ -419,6 +438,7 @@ public:
 			performSetupRoutine(robotDatas);
 			performSetupRoutine(playerDatas);
 			performSetupRoutine(bookDatas);
+			setBooksToTake(books.size());
 			isSetup = true;
 		}
 		//std::cout << "SET UP" << std::endl;
@@ -432,11 +452,13 @@ public:
 		{
 			isGameLost = false;
 			isGameWon = false;
+			splashToShow = "";
 			performCleanRoutine(others);
 			performCleanRoutine(enemies);
 			performCleanRoutine(covers);
 			performCleanRoutine(decoys);
 			performCleanRoutine(books);
+			setBooksToTake(0);
 			if(player)
 			{
 				delete player;
@@ -453,14 +475,17 @@ public:
     	setup();
     }
     
-    Scene(const Vector2u& mapSize, MapTileData::ListR _mapTileDatas, RobotData::ListR _robotDatas, BookData::ListR _bookDatas, PlayerData::ListR _playerDatas, const Vector2d& winningTile_)
+    std::string splashToShow = "";
+    Scene(const Vector2u& mapSize, MapTileData::ListR _mapTileDatas, RobotData::ListR _robotDatas, BookData::ListR _bookDatas, PlayerData::ListR _playerDatas, const Vector2u& winningTile_, const std::string& splash_ = "")
         : 
             map(*this, mapSize, 32),
             mapTileDatas(_mapTileDatas),
             robotDatas(_robotDatas),
             playerDatas(_playerDatas),
             bookDatas(_bookDatas),
-            winningTile(winningTile_)
+            winningTile(winningTile_),
+            nextLevelActor(map, map.getTileCenterPosition(winningTile)),
+            splash(splash_)
     {
     }
     
